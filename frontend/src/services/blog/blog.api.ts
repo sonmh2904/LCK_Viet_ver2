@@ -104,12 +104,55 @@ export const createBlog = async (blogData: {
   status?: string;
 }): Promise<Blog> => {
   try {
+    console.log("Creating blog with data:", blogData);
     const response = await instance.post("/blog", blogData);
-    const data: Blog = await response.json();
-    return data;
+    
+    console.log("Create blog response status:", response.status);
+    console.log("Create blog response headers:", Object.fromEntries(response.headers.entries()));
+    
+    // Check if response is actually JSON
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await response.text();
+      console.error("Non-JSON response from create blog:", text.substring(0, 500));
+      throw new Error("Server returned non-JSON response");
+    }
+    
+    const result = await response.json();
+    console.log("Blog creation result:", result);
+    console.log("Result type:", typeof result);
+    console.log("Result keys:", Object.keys(result));
+    console.log("Has code property:", 'code' in result);
+    console.log("Has data property:", 'data' in result);
+    console.log("Has _id property:", '_id' in result);
+    
+    // Handle both direct Blog object and wrapped response
+    if (result.code && result.data) {
+      console.log("Using wrapped success response format");
+      return result.data;
+    } else if (result._id) {
+      console.log("Using direct Blog object format");
+      return result;
+    } else if (result.code && !result.data) {
+      console.error("Backend returned error response:", result);
+      throw new Error(result.message || 'Server error occurred');
+    } else {
+      // Log the actual response for debugging
+      console.error("Unexpected response format. Full response:", JSON.stringify(result, null, 2));
+      throw new Error(`Invalid response format. Expected {code, data} or {_id} but got: ${JSON.stringify(Object.keys(result))}`);
+    }
   } catch (error) {
     console.error("Error creating blog:", error);
-    throw new Error("Đã xảy ra lỗi khi tạo bài viết");
+    
+    // Try to get more error details if it's a fetch error
+    if (error instanceof Error && error.message.includes('non-JSON')) {
+      throw error;
+    }
+    
+    // For other errors, provide more context
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    console.error("Detailed error:", errorMessage);
+    throw new Error(`Đã xảy ra lỗi khi tạo bài viết: ${errorMessage}`);
   }
 };
 
@@ -123,12 +166,49 @@ export const updateBlog = async (
   }
 ): Promise<Blog> => {
   try {
+    console.log("Updating blog with slug:", slug, "data:", updateData);
     const response = await instance.put(`/blog/${slug}`, updateData);
-    const data: Blog = await response.json();
-    return data;
+    
+    console.log("Update blog response status:", response.status);
+    console.log("Update blog response headers:", Object.fromEntries(response.headers.entries()));
+    
+    // Check if response is actually JSON
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await response.text();
+      console.error("Non-JSON response from update blog:", text.substring(0, 500));
+      throw new Error("Server returned non-JSON response");
+    }
+    
+    const result = await response.json();
+    console.log("Blog update result:", result);
+    
+    // Handle both direct Blog object and wrapped response
+    if (result.code && result.data) {
+      // Wrapped response format
+      return result.data;
+    } else if (result._id) {
+      // Direct Blog object
+      return result;
+    } else if (result.code && !result.data) {
+      // Error response format (has code but no data)
+      console.error("Backend returned error response:", result);
+      throw new Error(result.message || 'Server error occurred');
+    } else {
+      throw new Error("Invalid response format");
+    }
   } catch (error) {
     console.error(`Error updating blog ${slug}:`, error);
-    throw new Error("Đã xảy ra lỗi khi cập nhật bài viết");
+    
+    // Try to get more error details if it's a fetch error
+    if (error instanceof Error && error.message.includes('non-JSON')) {
+      throw error;
+    }
+    
+    // For other errors, provide more context
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    console.error("Detailed error:", errorMessage);
+    throw new Error(`Đã xảy ra lỗi khi cập nhật bài viết: ${errorMessage}`);
   }
 };
 

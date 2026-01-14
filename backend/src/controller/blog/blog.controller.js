@@ -6,9 +6,9 @@ const slugify = require("slugify");
 
 // Configure Cloudinary
 cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.api_key,
+  api_secret: process.env.api_secret,
 });
 
 // Ensure upload directory exists
@@ -26,9 +26,21 @@ const generateSlug = (title) => {
   });
 };
 
-// Upload image to Cloudinary
-const uploadToCloudinary = async (filePath) => {
+// Upload image to Cloudinary (with fallback to base64)
+const uploadToCloudinary = async (filePath, base64Data = null) => {
   try {
+    // If base64 data is provided, return it directly (fallback)
+    if (base64Data) {
+      console.log('Using base64 data fallback for image');
+      return base64Data;
+    }
+    
+    // Check if Cloudinary is configured
+    if (!process.env.cloud_name || !process.env.api_key || !process.env.api_secret) {
+      console.warn('Cloudinary not configured, using base64 fallback');
+      throw new Error('Cloudinary not configured');
+    }
+    
     const result = await cloudinary.uploader.upload(filePath, {
       folder: 'blog-images',
       resource_type: 'auto'
@@ -36,7 +48,12 @@ const uploadToCloudinary = async (filePath) => {
     return result.secure_url;
   } catch (error) {
     console.error('Error uploading to Cloudinary:', error);
-    throw new Error('Failed to upload image');
+    console.error('Cloudinary error details:', {
+      message: error.message,
+      http_code: error.http_code,
+      name: error.name
+    });
+    throw new Error(`Cloudinary upload failed: ${error.message}`);
   }
 };
 
@@ -121,17 +138,17 @@ module.exports.createBlog = async (req, res) => {
     if (!title) {
       return res
         .status(400)
-        .json({ message: "Tiêu đề là bắt buộc" });
+        .json({ code: 400, message: "Tiêu đề là bắt buộc" });
     }
     
     if (!Array.isArray(content) || content.length === 0) {
-      return res.status(400).json({ message: "Mảng nội dung là bắt buộc" });
+      return res.status(400).json({ code: 400, message: "Mảng nội dung là bắt buộc" });
     }
     
     if (status && !["active", "inactive", "draft"].includes(status)) {
       return res
         .status(400)
-        .json({ message: "Giá trị trạng thái không hợp lệ" });
+        .json({ code: 400, message: "Giá trị trạng thái không hợp lệ" });
     }
     
     const slug = generateSlug(title);
@@ -139,7 +156,7 @@ module.exports.createBlog = async (req, res) => {
     // Check if slug already exists
     const existingBlog = await Blog.findOne({ slug });
     if (existingBlog) {
-      return res.status(400).json({ message: "Tiêu đề bài viết đã tồn tại" });
+      return res.status(400).json({ code: 400, message: "Tiêu đề bài viết đã tồn tại" });
     }
     
     let mainImageUrl = req.body.image || "";
@@ -154,17 +171,26 @@ module.exports.createBlog = async (req, res) => {
     
     const processedContent = await Promise.all(
       content.map(async (item, index) => {
-        if (
-          item.type === "image" &&
-          req.files &&
-          req.files[`contentImages[${index}]`]
-        ) {
-          const contentImage = req.files[`contentImages[${index}]`][0];
-          const result = await cloudinary.uploader.upload(contentImage.path, {
-            folder: "blog_images",
-          });
-          await fs.unlink(contentImage.path);
-          return { ...item, url: result.secure_url };
+        // Handle image blocks - if imageUrl is already provided (from upload), use it
+        if (item.type === "image") {
+          if (item.imageUrl) {
+            // Image was already uploaded and has URL
+            return {
+              ...item,
+              url: item.imageUrl // Map imageUrl to url for consistency
+            };
+          } else if (
+            req.files &&
+            req.files[`contentImages[${index}]`]
+          ) {
+            // Legacy file upload handling
+            const contentImage = req.files[`contentImages[${index}]`][0];
+            const result = await cloudinary.uploader.upload(contentImage.path, {
+              folder: "blog_images",
+            });
+            await fs.unlink(contentImage.path);
+            return { ...item, url: result.secure_url };
+          }
         }
         
         return {
@@ -185,7 +211,11 @@ module.exports.createBlog = async (req, res) => {
     });
     
     await newBlog.save();
-    res.status(201).json(newBlog);
+    res.status(201).json({ 
+      code: 201, 
+      message: "Blog created successfully", 
+      data: newBlog 
+    });
   } catch (error) {
     console.error("Error creating blog:", error);
     if (req.files) {
@@ -195,7 +225,11 @@ module.exports.createBlog = async (req, res) => {
           .map((file) => fs.unlink(file.path).catch(console.error))
       );
     }
-    res.status(400).json({ message: "Lỗi khi tạo bài viết" });
+    res.status(400).json({ 
+      code: 400, 
+      message: "Lỗi khi tạo bài viết",
+      error: error.message 
+    });
   }
 };
 
@@ -208,17 +242,17 @@ module.exports.updateBlog = async (req, res) => {
     if (!title) {
       return res
         .status(400)
-        .json({ message: "Tiêu đề là bắt buộc" });
+        .json({ code: 400, message: "Tiêu đề là bắt buộc" });
     }
     
     if (!Array.isArray(content) || content.length === 0) {
-      return res.status(400).json({ message: "Mảng nội dung là bắt buộc" });
+      return res.status(400).json({ code: 400, message: "Mảng nội dung là bắt buộc" });
     }
     
     if (status && !["active", "inactive", "draft"].includes(status)) {
       return res
         .status(400)
-        .json({ message: "Giá trị trạng thái không hợp lệ" });
+        .json({ code: 400, message: "Giá trị trạng thái không hợp lệ" });
     }
     
     const newSlug = title
@@ -237,16 +271,26 @@ module.exports.updateBlog = async (req, res) => {
     
     const processedContent = await Promise.all(
       content.map(async (item, index) => {
-        if (item.type === "image" && req.files && req.files.contentImages) {
-          const contentImage = req.files.contentImages.find(
-            (file) => file.fieldname === `contentImages[${index}]` 
-          );
-          if (contentImage) {
-            const result = await cloudinary.uploader.upload(contentImage.path, {
-              folder: "blog_images",
-            });
-            await fs.unlink(contentImage.path);
-            return { ...item, url: result.secure_url };
+        // Handle image blocks - if imageUrl is already provided (from upload), use it
+        if (item.type === "image") {
+          if (item.imageUrl) {
+            // Image was already uploaded and has URL
+            return {
+              ...item,
+              url: item.imageUrl // Map imageUrl to url for consistency
+            };
+          } else if (req.files && req.files.contentImages) {
+            // Legacy file upload handling
+            const contentImage = req.files.contentImages.find(
+              (file) => file.fieldname === `contentImages[${index}]` 
+            );
+            if (contentImage) {
+              const result = await cloudinary.uploader.upload(contentImage.path, {
+                folder: "blog_images",
+              });
+              await fs.unlink(contentImage.path);
+              return { ...item, url: result.secure_url };
+            }
           }
         }
         return {
@@ -272,10 +316,14 @@ module.exports.updateBlog = async (req, res) => {
     );
     
     if (!updatedBlog) {
-      return res.status(404).json({ message: "Không tìm thấy bài viết" });
+      return res.status(404).json({ code: 404, message: "Không tìm thấy bài viết" });
     }
     
-    res.json(updatedBlog);
+    res.json({ 
+      code: 200, 
+      message: "Blog updated successfully", 
+      data: updatedBlog 
+    });
   } catch (error) {
     console.error("Error updating blog:", error);
     if (req.files) {
@@ -285,7 +333,11 @@ module.exports.updateBlog = async (req, res) => {
           .map((file) => fs.unlink(file.path).catch(console.error))
       );
     }
-    res.status(400).json({ message: "Lỗi khi cập nhật bài viết" });
+    res.status(400).json({ 
+      code: 400, 
+      message: "Lỗi khi cập nhật bài viết",
+      error: error.message 
+    });
   }
 };
 

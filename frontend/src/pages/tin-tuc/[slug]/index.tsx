@@ -172,10 +172,10 @@ export default function BlogDetailPage() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
 
-          <article className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <article className="overflow-hidden">
             {/* Featured Image */}
             {blog.image && (
-              <div className="relative h-96 w-full">
+              <div className="relative h-96 w-full rounded-xl overflow-hidden mb-8">
                 <Image
                   src={blog.image}
                   alt={blog.title}
@@ -185,7 +185,7 @@ export default function BlogDetailPage() {
               </div>
             )}
 
-            <div className="p-8">
+            <div className="px-0">
               {/* Article Header */}
               <header className="mb-8">
                 <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight">

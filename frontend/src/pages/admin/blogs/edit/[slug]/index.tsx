@@ -11,20 +11,28 @@ import {
   X
 } from "lucide-react";
 import { getBlogBySlug, updateBlog } from "@/services/blog/blog.api";
+import { uploadImage } from "@/services/upload/upload.service";
 import { toast } from "sonner";
 
 interface ContentBlock {
-  type: "paragraph" | "header" | "bullet";
-  text: string;
+  type: "paragraph" | "header" | "bullet" | "image";
+  text?: string;
   bold?: boolean;
   italic?: boolean;
   fontSize?: "small" | "medium" | "large";
+  imageUrl?: string;
+  imageFile?: File;
+  imagePreview?: string;
 }
 
 export default function EditBlog() {
   const router = useRouter();
   const [blog, setBlog] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
+  const [isUploading, setIsUploading] = useState(false);
+  const [contentUploading, setContentUploading] = useState<{ [key: number]: boolean }>({});
   const [formData, setFormData] = useState({
     title: "",
     content: [] as ContentBlock[],
@@ -50,12 +58,96 @@ export default function EditBlog() {
         image: data.image || "",
         status: (data.status || "active") as "active" | "inactive" | "draft"
       });
+      // Set existing image as preview
+      if (data.image) {
+        setImagePreview(data.image);
+      }
     } catch (error) {
       console.error("Error fetching blog:", error);
       toast.error("Không thể tải thông tin bài viết");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Vui lòng chọn file hình ảnh');
+        return;
+      }
+      
+      // Validate file size (5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Kích thước hình ảnh không được vượt quá 5MB');
+        return;
+      }
+      
+      setImageFile(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setImagePreview(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+      
+      // Clear any existing image URL
+      setFormData(prev => ({ ...prev, image: '' }));
+    }
+  };
+
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview('');
+    setFormData(prev => ({ ...prev, image: '' }));
+  };
+
+  const handleContentImageChange = (index: number, file: File) => {
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Vui lòng chọn file hình ảnh');
+      return;
+    }
+    
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Kích thước hình ảnh không được vượt quá 5MB');
+      return;
+    }
+    
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const newContent = [...formData.content];
+      newContent[index] = {
+        ...newContent[index],
+        imageFile: file,
+        imagePreview: e.target?.result as string,
+        imageUrl: '' // Clear existing URL if any
+      };
+      setFormData(prev => ({
+        ...prev,
+        content: newContent
+      }));
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const removeContentImage = (index: number) => {
+    const newContent = [...formData.content];
+    newContent[index] = {
+      ...newContent[index],
+      imageFile: undefined,
+      imagePreview: '',
+      imageUrl: ''
+    };
+    setFormData(prev => ({
+      ...prev,
+      content: newContent
+    }));
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -77,13 +169,16 @@ export default function EditBlog() {
     }));
   };
 
-  const addContentBlock = (type: "paragraph" | "header" | "bullet" = "paragraph") => {
+  const addContentBlock = (type: "paragraph" | "header" | "bullet" | "image" = "paragraph") => {
     const newBlock: ContentBlock = {
       type,
-      text: type === "paragraph" ? "" : "",
+      text: type === "image" ? "" : "",
       bold: false,
       italic: false,
-      fontSize: "medium" as const
+      fontSize: "medium" as const,
+      imageUrl: type === "image" ? "" : undefined,
+      imageFile: type === "image" ? undefined : undefined,
+      imagePreview: type === "image" ? "" : undefined
     };
     setFormData(prev => ({
       ...prev,
@@ -129,14 +224,46 @@ export default function EditBlog() {
     try {
       setLoading(true);
       const slug = router.query.slug as string;
-      await updateBlog(slug, formData);
+      
+      let imageUrl = formData.image;
+      
+      // Upload new main image if a file is selected
+      if (imageFile) {
+        setIsUploading(true);
+        imageUrl = await uploadImage(imageFile);
+        setIsUploading(false);
+      }
+      
+      // Upload content images
+      const updatedContent = [...formData.content];
+      for (let i = 0; i < updatedContent.length; i++) {
+        const block = updatedContent[i];
+        if (block.type === 'image' && block.imageFile && !block.imageUrl) {
+          setContentUploading(prev => ({ ...prev, [i]: true }));
+          const uploadedUrl = await uploadImage(block.imageFile);
+          updatedContent[i] = {
+            ...block,
+            imageUrl: uploadedUrl,
+            imageFile: undefined
+          };
+          setContentUploading(prev => ({ ...prev, [i]: false }));
+        }
+      }
+      
+      await updateBlog(slug, {
+        ...formData,
+        image: imageUrl,
+        content: updatedContent
+      });
       toast.success("Cập nhật bài viết thành công");
       router.push("/admin/blogs");
     } catch (error) {
       console.error("Error updating blog:", error);
-      toast.error("Không thể cập nhật bài viết");
+      toast.error(error instanceof Error ? error.message : "Không thể cập nhật bài viết");
     } finally {
       setLoading(false);
+      setIsUploading(false);
+      setContentUploading({});
     }
   };
 
@@ -173,11 +300,74 @@ export default function EditBlog() {
           <div key={index} className="mb-4">
             <input
               type="text"
-              value={block.text}
+              value={block.text || ""}
               onChange={(e) => updateContentBlock(index, "text", e.target.value)}
               placeholder="Nhập nội dung gạch đầu dòng..."
               className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
+          </div>
+        );
+      
+      case "image":
+        return (
+          <div key={index} className="mb-4 p-4 border border-gray-200 rounded-lg">
+            <div className="flex justify-between items-start mb-2">
+              <span className="text-sm font-medium text-gray-600">Hình ảnh</span>
+              <button
+                type="button"
+                onClick={() => removeContentBlock(index)}
+                className="text-red-500 hover:text-red-700 text-sm"
+              >
+                Xóa
+              </button>
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center justify-center w-full">
+                <label className="flex flex-col items-center justify-center w-full h-24 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                  <div className="flex flex-col items-center justify-center pt-3 pb-4">
+                    <svg className="w-6 h-6 mb-2 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                      <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                    </svg>
+                    <p className="text-xs text-gray-500">
+                      <span className="font-semibold">Nhấn để tải lên</span>
+                    </p>
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) handleContentImageChange(index, file);
+                    }}
+                    className="hidden"
+                    disabled={loading || contentUploading[index]}
+                  />
+                </label>
+              </div>
+              
+              {(block.imagePreview || block.imageUrl) && (
+                <div className="relative inline-block">
+                  <img 
+                    src={block.imagePreview || block.imageUrl} 
+                    alt="Preview" 
+                    className="h-32 w-32 object-cover rounded-lg border border-gray-200"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeContentImage(index)}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition"
+                    disabled={loading || contentUploading[index]}
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                  {contentUploading[index] && (
+                    <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
+                      <div className="text-white text-xs">Đang tải lên...</div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
         );
       
@@ -234,28 +424,55 @@ export default function EditBlog() {
 
               <div>
                 <label htmlFor="image" className="block text-sm font-medium text-gray-700 mb-2">
-                  URL hình ảnh
+                  Hình ảnh bài viết
                 </label>
-                <input
-                  type="url"
-                  id="image"
-                  value={formData.image}
-                  onChange={(e) => handleInputChange("image", e.target.value)}
-                  placeholder="https://example.com/image.jpg"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                />
-                {formData.image && (
-                  <div className="mt-2">
-                    <img 
-                      src={formData.image} 
-                      alt="Preview" 
-                      className="h-32 w-32 object-cover rounded-lg border border-gray-200"
-                      onError={(e) => {
-                        e.currentTarget.src = "/images/placeholder.jpg";
-                      }}
-                    />
+                <div className="space-y-4">
+                  <div className="flex items-center justify-center w-full">
+                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <svg className="w-8 h-8 mb-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                          <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                        </svg>
+                        <p className="mb-2 text-sm text-gray-500">
+                          <span className="font-semibold">Nhấn để tải lên</span> hoặc kéo và thả
+                        </p>
+                        <p className="text-xs text-gray-500">PNG, JPG, WEBP (Tối đa 5MB)</p>
+                      </div>
+                      <input
+                        id="image"
+                        name="image"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                        disabled={loading || isUploading}
+                      />
+                    </label>
                   </div>
-                )}
+                  
+                  {(imagePreview || formData.image) && (
+                    <div className="relative inline-block">
+                      <img 
+                        src={imagePreview || formData.image} 
+                        alt="Preview" 
+                        className="h-48 w-48 object-cover rounded-lg border border-gray-200"
+                      />
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition"
+                        disabled={loading || isUploading}
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                      {isUploading && (
+                        <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
+                          <div className="text-white text-sm">Đang tải lên...</div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div>
@@ -303,6 +520,14 @@ export default function EditBlog() {
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Gạch đầu dòng
+                </button>
+                <button
+                  type="button"
+                  onClick={() => addContentBlock("image")}
+                  className="flex items-center px-3 py-2 bg-orange-100 text-orange-700 rounded-md hover:bg-orange-200 text-sm"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Hình ảnh
                 </button>
               </div>
             </div>

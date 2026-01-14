@@ -46,6 +46,7 @@ const customFetch = async (url: string, options: ExtendedRequestInit = {}): Prom
         // Make the request
         const response = await fetch(url, options);
         console.log('Response status:', response.status, 'for URL:', url);
+        console.log('Response headers:', Object.fromEntries(response.headers.entries()));
 
         // Response interceptor - handle token refresh
         if (!response.ok && [401, 403].includes(response.status)) {
@@ -158,6 +159,30 @@ const api = {
             },
             body: data ? JSON.stringify(data) : undefined,
         }),
+
+    // Dedicated upload method for FormData
+    upload: (url: string, formData: FormData, options: ExtendedRequestInit = {}) => {
+        // Get token for auth
+        const token = store.getState().auth?.accessToken;
+        
+        console.log('Upload API call:', {
+            url: `${BASE_URL}${url}`,
+            hasToken: !!token,
+            formDataKeys: Array.from(formData.keys()),
+            formDataFiles: formData.get('image') instanceof File ? 'File present' : 'No file'
+        });
+        
+        return customFetch(`${BASE_URL}${url}`, {
+            ...options,
+            method: 'POST',
+            headers: {
+                ...(token && { 'Authorization': `Bearer ${token}` }),
+                // Don't set Content-Type for FormData - browser sets it automatically with boundary
+                ...options.headers,
+            },
+            body: formData,
+        });
+    },
 };
 
 export default api;

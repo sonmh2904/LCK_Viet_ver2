@@ -1,0 +1,196 @@
+"use client"
+
+import { CheckCircle2, Phone, ShieldCheck, Users } from "lucide-react"
+import { useState, useEffect } from "react"
+import { getProvinces, getWardsByProvinceCode, Province, Ward } from "@/services/address/address.api"
+
+const values = [
+  {
+    title: "Cam kết chất lượng",
+    description: "Mỗi công trình được kiểm định đa tầng với quy chuẩn châu Âu và bảo hành rõ ràng.",
+    icon: <ShieldCheck className="h-5 w-5" />,
+  },
+  {
+    title: "Đồng hành trọn gói",
+    description: "Đội ngũ LCK Việt theo sát từ ý tưởng, pháp lý đến thi công và bàn giao.",
+    icon: <Users className="h-5 w-5" />,
+  },
+  {
+    title: "Ngân sách minh bạch",
+    description: "Chi phí tối ưu, báo giá chi tiết, linh hoạt theo tiến độ và nhu cầu khách hàng.",
+    icon: <CheckCircle2 className="h-5 w-5" />,
+  },
+]
+
+export function ValuesContactSection() {
+  const [provinces, setProvinces] = useState<Province[]>([])
+  const [wards, setWards] = useState<Ward[]>([])
+  const [selectedProvince, setSelectedProvince] = useState<number>(0)
+  const [selectedWard, setSelectedWard] = useState<string>("")
+
+  useEffect(() => {
+    const fetchProvinces = async () => {
+      try {
+        const data = await getProvinces()
+        setProvinces(data)
+      } catch (error) {
+        console.error("Error loading provinces:", error)
+      }
+    }
+    fetchProvinces()
+  }, [])
+
+  useEffect(() => {
+    const fetchWards = async () => {
+      if (selectedProvince > 0) {
+        try {
+          const data = await getWardsByProvinceCode(selectedProvince)
+          setWards(data)
+        } catch (error) {
+          console.error("Error loading wards:", error)
+        }
+      } else {
+        setWards([])
+        setSelectedWard("")
+      }
+    }
+    fetchWards()
+  }, [selectedProvince])
+
+  const handleProvinceChange = (provinceCode: string) => {
+    const code = parseInt(provinceCode)
+    setSelectedProvince(code)
+    setSelectedWard("")
+  }
+
+  const handleWardChange = (wardName: string) => {
+    setSelectedWard(wardName)
+  }
+  return (
+    <section className="relative overflow-hidden py-24 text-white">
+      <div className="absolute inset-0 bg-[url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'160\' height=\'160\' viewBox=\'0 0 160 160\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\' opacity=\'0.08\'%3E%3Cpath d=\'M80 0h80v80H80zM0 80h80v80H0z\' fill=\'%230066cc\'/%3E%3Cpath d=\'M0 0h80v80H0zM80 80h80v80H80z\' fill=\'%23b30000\'/%3E%3C/g%3E%3C/svg%3E')]" />
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-500/90 via-red-400/85 to-red-800/80" />
+
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-12 px-6 lg:flex-row">
+        <div className="flex-1 space-y-8">
+          <p className="inline-flex items-center gap-2 rounded-full bg-white/20 backdrop-blur-sm px-5 py-2 text-xs font-bold uppercase tracking-[0.4em] text-white drop-shadow-lg">
+            Vì sao chọn chúng tôi
+          </p>
+          <h2 className="text-4xl font-black leading-tight sm:text-5xl text-white drop-shadow-2xl">
+            Cam kết từ LCK Việt cho công trình bền vững và khác biệt
+          </h2>
+          <p className="text-base leading-relaxed text-white/95 drop-shadow-md">
+            Chúng tôi không chỉ mang đến bản vẽ đẹp mắt, mà còn là giải pháp đồng hành trọng tâm, minh bạch, đảm bảo hiệu quả đầu tư và giá trị thẩm mỹ dài hạn.
+          </p>
+          <div className="space-y-6">
+            {values.map((value) => (
+              <div key={value.title} className="flex gap-4 rounded-2xl bg-white/15 backdrop-blur-md p-5 border border-white/20">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/25 backdrop-blur-sm">
+                  {value.icon}
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-lg font-bold text-white drop-shadow-md">{value.title}</h3>
+                  <p className="text-sm text-white/90 leading-relaxed drop-shadow-sm">{value.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex-1">
+          <div className="rounded-3xl bg-white/15 backdrop-blur-xl p-8 border border-white/20">
+            <h3 className="text-2xl font-black text-white drop-shadow-lg">Đăng ký tư vấn miễn phí</h3>
+            <p className="mt-2 text-sm text-white/85 leading-relaxed drop-shadow-sm">
+              Điền thông tin, đội ngũ LCK Việt sẽ liên hệ trong 24h để tư vấn giải pháp phù hợp nhất.
+            </p>
+            <form className="mt-6 space-y-4">
+              <div>
+                <label className="text-xs font-bold uppercase tracking-[0.3em] text-white/80 drop-shadow-sm">
+                  Họ và tên
+                </label>
+                <input
+                  type="text"
+                  placeholder="Nguyễn Văn A"
+                  className="mt-2 w-full rounded-2xl border border-white/30 bg-white/15 backdrop-blur-sm px-4 py-3 text-white placeholder:text-white/60 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/30"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold uppercase tracking-[0.3em] text-white/80 drop-shadow-sm">
+                  Số điện thoại
+                </label>
+                <input
+                  type="tel"
+                  placeholder="0826 231 333"
+                  className="mt-2 w-full rounded-2xl border border-white/30 bg-white/15 backdrop-blur-sm px-4 py-3 text-white placeholder:text-white/60 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/30"
+                />
+              </div>
+              <div>
+                <label className="text-xs font-bold uppercase tracking-[0.3em] text-white/80 drop-shadow-sm">
+                  Địa chỉ
+                </label>
+                <div className="mt-2 grid gap-3">
+                  <div className="relative">
+                    <select
+                      value={selectedProvince}
+                      onChange={(e) => handleProvinceChange(e.target.value)}
+                      className="w-full rounded-2xl border border-white/30 bg-white/15 backdrop-blur-sm px-4 py-3 text-white outline-none transition focus:border-white focus:ring-2 focus:ring-white/30 appearance-none cursor-pointer"
+                    >
+                      <option value={0} className="bg-[#d6301f] text-white">Chọn tỉnh/thành phố</option>
+                      {provinces.map((province) => (
+                        <option key={province.province_code} value={province.province_code} className="bg-[#d6301f] text-white">
+                          {province.name}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-white/70">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+
+                  <div className="relative">
+                    <select
+                      value={selectedWard}
+                      onChange={(e) => handleWardChange(e.target.value)}
+                      disabled={selectedProvince === 0}
+                      className="w-full rounded-2xl border border-white/30 bg-white/15 backdrop-blur-sm px-4 py-3 text-white outline-none transition focus:border-white focus:ring-2 focus:ring-white/30 appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <option value="" className="bg-[#d6301f] text-white">Chọn quận/huyện</option>
+                      {wards.map((ward, index) => (
+                        <option key={index} value={ward.ward} className="bg-[#d6301f] text-white">
+                          {ward.ward}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-white/70">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-bold uppercase tracking-[0.3em] text-white/80 drop-shadow-sm">
+                  Nhu cầu chi tiết
+                </label>
+                <textarea
+                  rows={4}
+                  placeholder="Mô tả ý tưởng, ngân sách dự kiến..."
+                  className="mt-2 w-full rounded-2xl border border-white/30 bg-white/15 backdrop-blur-sm px-4 py-3 text-white placeholder:text-white/60 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/30 resize-none"
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full rounded-full bg-white py-3 text-base font-semibold text-[#cf1f1f] shadow-lg shadow-black/10 transition-all hover:-translate-y-1 hover:bg-yellow-50"
+              >
+                Gửi yêu cầu tư vấn
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}

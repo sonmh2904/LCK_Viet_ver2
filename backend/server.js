@@ -1,0 +1,51 @@
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const app = express();
+const connectDB = require("./src/config/db");
+const router = require("./src/routes/index")
+
+require("dotenv").config();
+
+const corsOptions = {
+  origin: [
+    process.env.FRONTEND_URL || "http://localhost:3000",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000"
+  ],
+  methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  credentials: true,
+  optionsSuccessStatus: 200
+};
+
+// Middleware
+app.use(cors(corsOptions));
+
+// Log CORS requests
+app.use((req, res, next) => {
+  next();
+});
+
+app.use(express.json());
+// Test CORS route
+app.get('/api/v1/test-cors', (req, res) => {
+  res.json({ 
+    message: 'CORS is working!', 
+    origin: req.headers.origin,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Routes
+router(app);
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+// DB connect
+connectDB()
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch((err) => console.log(err));
+
+app.listen(process.env.PORT, () =>
+  console.log(`🚀 Server running on port ${process.env.PORT}`)
+);

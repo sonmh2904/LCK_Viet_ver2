@@ -13,9 +13,10 @@ import {
   Calendar,
   User,
   MessageSquare,
-  TrendingUp
+  TrendingUp,
+  Star
 } from "lucide-react";
-import { getAllBlogs, deleteBlog, Blog } from "@/services/blog/blog.api";
+import { getAllBlogs, deleteBlog, updateBlog, Blog } from "@/services/blog/blog.api";
 import { toast } from "sonner";
 
 export default function BlogManagement() {
@@ -23,7 +24,6 @@ export default function BlogManagement() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedBlogs, setSelectedBlogs] = useState<string[]>([]);
 
   useEffect(() => {
     fetchBlogs();
@@ -63,40 +63,30 @@ export default function BlogManagement() {
     }
   };
 
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedBlogs(blogs.map(blog => blog.slug));
-    } else {
-      setSelectedBlogs([]);
-    }
-  };
-
-  const handleSelectBlog = (blogSlug: string, checked: boolean) => {
-    if (checked) {
-      setSelectedBlogs([...selectedBlogs, blogSlug]);
-    } else {
-      setSelectedBlogs(selectedBlogs.filter(slug => slug !== blogSlug));
-    }
-  };
-
-  const handleBulkDelete = async () => {
-    if (selectedBlogs.length === 0) return;
-    
-    if (confirm(`Bạn có chắc muốn xóa ${selectedBlogs.length} bài viết đã chọn?`)) {
-      try {
-        await Promise.all(selectedBlogs.map(slug => deleteBlog(slug)));
-        setBlogs(blogs.filter(blog => !selectedBlogs.includes(blog.slug)));
-        setSelectedBlogs([]);
-        toast.success(`Xóa ${selectedBlogs.length} bài viết thành công`);
-      } catch (error) {
-        toast.error("Không thể xóa các bài viết đã chọn");
-        console.error(error);
-      }
-    }
-  };
-
   const handleSearch = () => {
     fetchBlogs();
+  };
+
+  const handleToggleHighlight = async (blog: Blog) => {
+    try {
+      const updatedBlog = await updateBlog(blog.slug, {
+        title: blog.title,
+        content: blog.content,
+        image: blog.image,
+        status: blog.status,
+        isHighlight: !blog.isHighlight
+      });
+      
+      // Update blog in local state
+      setBlogs(blogs.map(b => 
+        b._id === blog._id ? { ...b, isHighlight: !b.isHighlight } : b
+      ));
+      
+      toast.success(blog.isHighlight ? "Bỏ nổi bật thành công" : "Đặt nổi bật thành công");
+    } catch (error) {
+      toast.error("Không thể cập nhật trạng thái nổi bật");
+      console.error(error);
+    }
   };
 
   const filteredBlogs = blogs.filter(blog => 
@@ -118,7 +108,7 @@ export default function BlogManagement() {
   }
 
   return (
-    <AdminLayout title="Quản lý bài viết" description="Quản lý tất cả bài viết blog">
+    <AdminLayout >
       {/* Header with Add Blog Button */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center space-x-4">
@@ -151,16 +141,16 @@ export default function BlogManagement() {
 
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <div className="flex items-center justify-between">
-            <div className="p-3 bg-green-50 rounded-lg">
-              <TrendingUp className="w-6 h-6 text-green-600" />
+            <div className="p-3 bg-yellow-50 rounded-lg">
+              <Star className="w-6 h-6 text-yellow-600" />
             </div>
-            <span className="text-sm font-medium text-green-600">+8%</span>
+            <span className="text-sm font-medium text-yellow-600">+{blogs.filter(blog => blog.isHighlight).length}</span>
           </div>
           <div className="mt-4">
             <div className="text-2xl font-bold text-gray-900">
-              {blogs.reduce((sum, blog) => sum + (blog.views || 0), 0).toLocaleString()}
+              {blogs.filter(blog => blog.isHighlight).length}
             </div>
-            <div className="text-sm text-gray-600">Tổng lượt xem</div>
+            <div className="text-sm text-gray-600">Bài viết nổi bật</div>
           </div>
         </div>
 
@@ -227,13 +217,8 @@ export default function BlogManagement() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-3 text-left">
-                  <input
-                    type="checkbox"
-                    checked={selectedBlogs.length === filteredBlogs.length && filteredBlogs.length > 0}
-                    onChange={(e) => handleSelectAll(e.target.checked)}
-                    className="rounded border-gray-300"
-                  />
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  STT
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Tiêu đề
@@ -242,7 +227,10 @@ export default function BlogManagement() {
                   Trạng thái
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Lượt xem
+                  Hình ảnh
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Nổi bật
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Ngày tạo
@@ -256,12 +244,9 @@ export default function BlogManagement() {
               {filteredBlogs.map((blog) => (
                 <tr key={blog._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
-                    <input
-                      type="checkbox"
-                      checked={selectedBlogs.includes(blog.slug)}
-                      onChange={(e) => handleSelectBlog(blog.slug, e.target.checked)}
-                      className="rounded border-gray-300"
-                    />
+                    <div className="text-sm font-medium text-gray-900">
+                      {filteredBlogs.indexOf(blog) + 1}
+                    </div>
                   </td>
                   <td className="px-6 py-4">
                     <div>
@@ -274,21 +259,46 @@ export default function BlogManagement() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
-                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${
+                    <span className={`inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full whitespace-nowrap ${
                       blog.status === "active" 
-                        ? "bg-green-100 text-green-800"
+                        ? "bg-green-100 text-green-700 border border-green-200"
                         : blog.status === "draft"
-                        ? "bg-yellow-100 text-yellow-800"
-                        : "bg-gray-100 text-gray-800"
+                        ? "bg-yellow-100 text-yellow-700 border border-yellow-200"
+                        : "bg-gray-100 text-gray-700 border border-gray-200"
                     }`}>
+                      <span className={`w-2 h-2 rounded-full mr-1.5 ${
+                        blog.status === "active" 
+                          ? "bg-green-500"
+                          : blog.status === "draft"
+                          ? "bg-yellow-500"
+                          : "bg-gray-500"
+                      }`}></span>
                       {blog.status === "active" ? "Đã xuất bản" : blog.status === "draft" ? "Nháp" : blog.status}
                     </span>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center">
-                      <Eye className="w-4 h-4 text-gray-400 mr-2" />
-                      <span className="text-sm text-gray-900">{blog.views || 0}</span>
+                      {blog.image && (
+                        <img 
+                          src={blog.image} 
+                          alt={blog.title}
+                          className="w-8 h-8 object-cover rounded"
+                        />
+                      )}
                     </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <button
+                      onClick={() => handleToggleHighlight(blog)}
+                      className={`p-1 rounded-full transition-colors ${
+                        blog.isHighlight 
+                          ? "text-yellow-500 hover:text-yellow-600" 
+                          : "text-gray-300 hover:text-yellow-500"
+                      }`}
+                      title={blog.isHighlight ? "Bỏ nổi bật" : "Đặt nổi bật"}
+                    >
+                      <Star className="w-4 h-4" fill={blog.isHighlight ? "currentColor" : "none"} />
+                    </button>
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center">

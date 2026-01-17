@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { 
-  BarChart3, 
   FileText, 
   Users, 
   Settings, 
@@ -68,12 +67,6 @@ export function AdminLayout({ children, title, description }: AdminLayoutProps) 
 
   const menuItems = [
     {
-      href: "/admin",
-      icon: BarChart3,
-      label: "Dashboard",
-      description: "Tổng quan"
-    },
-    {
       href: "/admin/blogs",
       icon: FileText,
       label: "Quản lý bài viết",
@@ -135,9 +128,6 @@ export function AdminLayout({ children, title, description }: AdminLayoutProps) 
   }
 
   const isActiveRoute = (href: string) => {
-    if (href === "/admin") {
-      return router.pathname === href;
-    }
     return router.pathname.startsWith(href);
   };
 

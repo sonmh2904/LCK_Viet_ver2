@@ -23,7 +23,8 @@ export function BlogCreateForm() {
     title: "",
     content: [] as ContentBlock[],
     image: "",
-    status: "active" as "active" | "inactive" | "draft"
+    status: "active" as "active" | "inactive" | "draft",
+    isHighlight: false
   });
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
@@ -47,7 +48,7 @@ export function BlogCreateForm() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     // Clear error when user starts typing
     if (errors[field]) {
@@ -485,6 +486,26 @@ export function BlogCreateForm() {
                 <option value="draft">Nháp</option>
                 <option value="inactive">Không hoạt động</option>
               </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Nổi bật
+              </label>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="isHighlight"
+                  name="isHighlight"
+                  checked={formData.isHighlight}
+                  onChange={(e) => handleChange("isHighlight", e.target.checked)}
+                  className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:ring-offset-2"
+                  disabled={isLoading}
+                />
+                <label htmlFor="isHighlight" className="ml-2 text-sm text-gray-700">
+                  Đánh dấu bài viết này là nổi bật
+                </label>
+              </div>
             </div>
           </div>
         </div>

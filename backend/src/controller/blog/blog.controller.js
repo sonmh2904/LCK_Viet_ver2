@@ -133,7 +133,7 @@ module.exports.uploadImage = async (req, res) => {
 // Create blog with slug and image
 module.exports.createBlog = async (req, res) => {
   try {
-    const { title, content, status } = req.body;
+    const { title, content, status, isHighlight } = req.body;
     
     if (!title) {
       return res
@@ -208,6 +208,7 @@ module.exports.createBlog = async (req, res) => {
       image: mainImageUrl,
       slug,
       status: status || "active",
+      isHighlight: isHighlight === "true" || isHighlight === true,
     });
     
     await newBlog.save();
@@ -237,7 +238,7 @@ module.exports.createBlog = async (req, res) => {
 module.exports.updateBlog = async (req, res) => {
   try {
     const { slug } = req.params;
-    const { title, content, status } = req.body;
+    const { title, content, status, isHighlight } = req.body;
     
     if (!title) {
       return res
@@ -310,6 +311,7 @@ module.exports.updateBlog = async (req, res) => {
         image: mainImageUrl,
         slug: newSlug,
         status: status || undefined,
+        isHighlight: isHighlight !== undefined ? (isHighlight === "true" || isHighlight === true) : undefined,
         updatedAt: Date.now(),
       },
       { new: true }
@@ -341,21 +343,21 @@ module.exports.updateBlog = async (req, res) => {
   }
 };
 
-// Get top viewed blogs
+// Get highlighted blogs
 module.exports.getTopViewedBlogs = async (req, res) => {
   try {
     const { limit = 5 } = req.query;
-    const blogs = await Blog.find().sort({ views: -1 }).limit(parseInt(limit));
+    const blogs = await Blog.find({ isHighlight: true }).sort({ createdAt: -1 }).limit(parseInt(limit));
     res.json({ 
       code: 200, 
-      message: "Top viewed blogs fetched successfully", 
+      message: "Highlighted blogs fetched successfully", 
       data: blogs 
     });
   } catch (error) {
-    console.error("Error fetching top viewed blogs:", error);
+    console.error("Error fetching highlighted blogs:", error);
     res.status(500).json({ 
       code: 500, 
-      message: "Failed to fetch top viewed blogs", 
+      message: "Failed to fetch highlighted blogs", 
       error: error.message 
     });
   }

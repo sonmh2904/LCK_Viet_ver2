@@ -41,6 +41,29 @@ export default function App({ Component, pageProps }: AppProps) {
               }}
             />
           )}
+
+          {!isAdminPage && (
+            <div className="fixed bottom-4 right-4 flex flex-col space-y-3 z-50">
+              <a
+                href="https://m.me/100081223427193"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center px-4 py-3 bg-gradient-to-r from-blue-500 via-red-400 to-red-800 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              >
+                <img src="/social_media/messenger.png" alt="Facebook Messenger" className="w-5 h-5 mr-2" />
+                <span className="text-sm font-medium">Chat Facebook (8h30-21h)</span>
+              </a>
+              <a
+                href="https://zalo.me/0374334444"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center px-4 py-3 bg-gradient-to-r from-blue-500 via-red-400 to-red-800 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              >
+                <img src="/social_media/zalo.png" alt="Zalo" className="w-5 h-5 mr-2" />
+                <span className="text-sm font-medium">Tư vấn Zalo (8h30-21h)</span>
+              </a>
+            </div>
+          )}
         </div>
       </PersistGate>
     </Provider>

@@ -29,6 +29,10 @@ export const uploadImage = async (file: File): Promise<string> => {
     });
   } catch (error) {
     console.error('Error converting image to base64:', error);
-    throw new Error(error instanceof Error ? error.message : 'Không thể xử lý hình ảnh');
+    
+    // Clean up localhost references from error message
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const cleanErrorMessage = errorMessage.replace(/https?:\/\/localhost:[\d]+/g, '').replace(/http:\/\/localhost:[\d]+/g, '');
+    throw new Error(cleanErrorMessage || 'Không thể xử lý hình ảnh');
   }
 };

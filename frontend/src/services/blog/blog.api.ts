@@ -21,6 +21,7 @@ export interface Blog {
   image: string;
   status: string;
   views?: number;
+  isHighlight?: boolean;
   createdAt: string;
   updatedAt: string;
 }
@@ -102,6 +103,7 @@ export const createBlog = async (blogData: {
   content: any[];
   image?: string;
   status?: string;
+  isHighlight?: boolean;
 }): Promise<Blog> => {
   try {
     console.log("Creating blog with data:", blogData);
@@ -152,7 +154,10 @@ export const createBlog = async (blogData: {
     // For other errors, provide more context
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     console.error("Detailed error:", errorMessage);
-    throw new Error(`Đã xảy ra lỗi khi tạo bài viết: ${errorMessage}`);
+    
+    // Clean up localhost references from error message
+    const cleanErrorMessage = errorMessage.replace(/https?:\/\/localhost:[\d]+/g, '').replace(/http:\/\/localhost:[\d]+/g, '');
+    throw new Error(`Đã xảy ra lỗi khi tạo bài viết: ${cleanErrorMessage}`);
   }
 };
 
@@ -163,6 +168,7 @@ export const updateBlog = async (
     content?: any[];
     image?: string;
     status?: string;
+    isHighlight?: boolean;
   }
 ): Promise<Blog> => {
   try {
@@ -184,18 +190,27 @@ export const updateBlog = async (
     console.log("Blog update result:", result);
     
     // Handle both direct Blog object and wrapped response
-    if (result.code && result.data) {
-      // Wrapped response format
-      return result.data;
-    } else if (result._id) {
-      // Direct Blog object
-      return result;
-    } else if (result.code && !result.data) {
-      // Error response format (has code but no data)
-      console.error("Backend returned error response:", result);
-      throw new Error(result.message || 'Server error occurred');
+    if (result && typeof result === 'object') {
+      // Check if it's a direct blog object or wrapped response
+      if (result.code && result.data) {
+        // Wrapped response format
+        console.log("Using wrapped success response format");
+        return result.data;
+      } else if (result._id) {
+        // Direct Blog object
+        console.log("Using direct Blog object format");
+        return result;
+      } else if (result.code && !result.data) {
+        // Error response format (has code but no data)
+        console.error("Backend returned error response:", result);
+        throw new Error(result.message || 'Server error occurred');
+      } else {
+        // Log the actual response for debugging
+        console.error("Unexpected response format. Full response:", JSON.stringify(result, null, 2));
+        throw new Error(`Invalid response format. Expected {code, data} or {_id} but got: ${JSON.stringify(Object.keys(result))}`);
+      }
     } else {
-      throw new Error("Invalid response format");
+      throw new Error("Invalid response format - not an object");
     }
   } catch (error) {
     console.error(`Error updating blog ${slug}:`, error);
@@ -208,7 +223,10 @@ export const updateBlog = async (
     // For other errors, provide more context
     const errorMessage = error instanceof Error ? error.message : "Unknown error";
     console.error("Detailed error:", errorMessage);
-    throw new Error(`Đã xảy ra lỗi khi cập nhật bài viết: ${errorMessage}`);
+    
+    // Clean up localhost references from error message
+    const cleanErrorMessage = errorMessage.replace(/https?:\/\/localhost:[\d]+/g, '').replace(/http:\/\/localhost:[\d]+/g, '');
+    throw new Error(`Đã xảy ra lỗi khi cập nhật bài viết: ${cleanErrorMessage}`);
   }
 };
 
@@ -219,6 +237,10 @@ export const deleteBlog = async (slug: string): Promise<boolean> => {
     return data.code === 200 || true; // Backend returns success flag or true
   } catch (error) {
     console.error(`Error deleting blog ${slug}:`, error);
+    
+    // Clean up localhost references from error message
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const cleanErrorMessage = errorMessage.replace(/https?:\/\/localhost:[\d]+/g, '').replace(/http:\/\/localhost:[\d]+/g, '');
     throw new Error("Đã xảy ra lỗi khi xóa bài viết");
   }
 };

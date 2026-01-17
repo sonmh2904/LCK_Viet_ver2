@@ -99,6 +99,25 @@ function NewsPageContent() {
     return new Date(dateString).toLocaleDateString('vi-VN', options);
   };
 
+  const getContentExcerpt = (content: any[]): string => {
+    if (!content || content.length === 0) return '';
+    
+    // Find the first text block (paragraph, header, or bullet)
+    const textBlock = content.find(block => 
+      block.type === 'paragraph' || 
+      block.type === 'header' || 
+      block.type === 'bullet'
+    );
+    
+    if (textBlock && textBlock.text) {
+      // Remove HTML tags and get first 50 characters
+      const plainText = textBlock.text.replace(/<[^>]*>/g, '');
+      return plainText.length > 50 ? plainText.substring(0, 50) + '...' : plainText;
+    }
+    
+    return '';
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -286,7 +305,7 @@ function NewsPageContent() {
                             {post.title}
                           </h3>
                         </Link>
-                        <p className="text-gray-600 mb-4 line-clamp-3">{post.excerpt || 'Chưa có mô tả'}</p>
+                        <p className="text-gray-600 mb-4 line-clamp-3">{post.excerpt || getContentExcerpt(post.content)}</p>
                         <Link
                           href={`/tin-tuc/${post.slug}`}
                           className="inline-flex items-center text-red-600 font-medium hover:text-red-700 transition-colors"

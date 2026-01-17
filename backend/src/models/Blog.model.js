@@ -56,6 +56,10 @@ const blogSchema = new Schema({
     enum: ["active", "inactive", "draft"],
     default: "active",
   },
+  isHighlight: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

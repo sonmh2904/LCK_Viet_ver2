@@ -37,7 +37,8 @@ export default function EditBlog() {
     title: "",
     content: [] as ContentBlock[],
     image: "",
-    status: "active" as "active" | "inactive" | "draft"
+    status: "active" as "active" | "inactive" | "draft",
+    isHighlight: false
   });
 
   useEffect(() => {
@@ -56,7 +57,8 @@ export default function EditBlog() {
         title: data.title || "",
         content: data.content || [],
         image: data.image || "",
-        status: (data.status || "active") as "active" | "inactive" | "draft"
+        status: (data.status || "active") as "active" | "inactive" | "draft",
+        isHighlight: data.isHighlight || false
       });
       // Set existing image as preview
       if (data.image) {
@@ -150,7 +152,7 @@ export default function EditBlog() {
     }));
   };
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | boolean) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -489,6 +491,24 @@ export default function EditBlog() {
                   <option value="draft">Nháp</option>
                   <option value="inactive">Không hoạt động</option>
                 </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Nổi bật
+                </label>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    id="isHighlight"
+                    checked={formData.isHighlight}
+                    onChange={(e) => handleInputChange("isHighlight", e.target.checked)}
+                    className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 focus:ring-offset-2"
+                  />
+                  <label htmlFor="isHighlight" className="ml-2 text-sm text-gray-700">
+                    Đánh dấu bài viết này là nổi bật
+                  </label>
+                </div>
               </div>
             </div>
           </div>

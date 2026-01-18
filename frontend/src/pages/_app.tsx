@@ -8,10 +8,50 @@ import { Provider } from "react-redux";
 import { PersistGate } from "redux-persist/integration/react";
 import { store, persistor } from "@/store/redux_store";
 import Head from "next/head";
+import { useRouter } from "next/router";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [mounted, setMounted] = useState(false);
+  const [pageTitle, setPageTitle] = useState("LCK Việt - Kiến tạo tương lai");
+  const router = useRouter();
+  
   useEffect(() => setMounted(true), []);
+
+  // Update page title based on current route
+  useEffect(() => {
+    const path = router.pathname;
+    let title = "LCK Việt - Kiến tạo tương lai";
+    
+    // Define page titles based on routes
+    const pageTitles: { [key: string]: string } = {
+      "/": "LCK Việt - Kiến tạo tương lai",
+      "/gioi-thieu": "Giới thiệu - LCK Việt",
+      "/tin-tuc": "Tin tức - LCK Việt",
+      "/lien-he": "Liên hệ - LCK Việt",
+      "/thiet-ke": "Thiết kế - LCK Việt",
+      "/thiet-ke/noi-that": "Thiết kế nội thất - LCK Việt",
+      "/thiet-ke/ngoai-that": "Thiết kế ngoại thất - LCK Việt",
+      "/bao-gia": "Báo giá - LCK Việt",
+      "/bao-gia/thiet-ke": "Báo giá thiết kế - LCK Việt",
+      "/bao-gia/thi-cong": "Báo giá thi công - LCK Việt",
+      "/dang-nhap": "Đăng nhập - LCK Việt",
+      "/dang-ky": "Đăng ký - LCK Việt",
+    };
+
+    // Check for exact matches first
+    if (pageTitles[path]) {
+      title = pageTitles[path];
+    } else {
+      // Handle dynamic routes (like blog posts, etc.)
+      if (path.startsWith("/tin-tuc/")) {
+        title = "Tin tức chi tiết - LCK Việt - Kiến tạo tương lai";
+      } else if (path.startsWith("/admin")) {
+        title = "Quản trị - LCK Việt - Kiến tạo tương lai";
+      }
+    }
+    
+    setPageTitle(title);
+  }, [router.pathname]);
 
   // Check if current page is admin page
   const isAdminPage = typeof window !== 'undefined' && window.location.pathname.startsWith('/admin');
@@ -20,7 +60,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <Head>
-          <title>LCK Việt - Kiến tạo tương lai</title>
+          <title>{pageTitle}</title>
         </Head>
         {!isAdminPage && <Header />}
         <div className={`${isAdminPage ? '' : 'pt-20'} bg-white min-h-screen`}>

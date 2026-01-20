@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/router";
 import { AdminLayout } from "@/components/layout/admin-layout";
 import { 
@@ -28,13 +28,7 @@ export default function InformationDetail() {
   const [editStatus, setEditStatus] = useState<"pending" | "completed">("pending");
   const [updating, setUpdating] = useState(false);
 
-  useEffect(() => {
-    if (id) {
-      fetchInformation();
-    }
-  }, [id]);
-
-  const fetchInformation = async () => {
+  const fetchInformation = useCallback(async () => {
     try {
       setLoading(true);
       const response = await getInformationById(id as string);
@@ -49,7 +43,13 @@ export default function InformationDetail() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    if (id) {
+      fetchInformation();
+    }
+  }, [id, fetchInformation]);
 
   const handleStatusUpdate = async () => {
     if (!information) return;

@@ -143,7 +143,7 @@ export const createBlog = async (blogData: {
       console.error("Unexpected response format. Full response:", JSON.stringify(result, null, 2));
       throw new Error(`Invalid response format. Expected {code, data} or {_id} but got: ${JSON.stringify(Object.keys(result))}`);
     }
-  } catch (error) {
+  } catch {
     throw new Error("Đã xảy ra lỗi khi tạo bài viết");
   }
 };
@@ -199,7 +199,7 @@ export const updateBlog = async (
     } else {
       throw new Error("Invalid response format - not an object");
     }
-  } catch (error) {
+  } catch {
     throw new Error("Đã xảy ra lỗi khi cập nhật bài viết");
   }
 };
@@ -209,7 +209,7 @@ export const deleteBlog = async (slug: string): Promise<boolean> => {
     const response = await instance.delete(`/blog/${slug}`);
     const data = await response.json();
     return data.code === 200 || true; // Backend returns success flag or true
-  } catch (error) {
+  } catch {
     throw new Error("Đã xảy ra lỗi khi xóa bài viết");
   }
 };

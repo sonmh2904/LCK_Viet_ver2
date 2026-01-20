@@ -65,7 +65,7 @@ export const verifyEmail = async (email: string, otp: string): Promise<ApiRespon
     try {
         const response = await instance.post("/auth/verify-email", { email, otp });
         return await response.json();
-    } catch (error) {
+    } catch {
         throw new Error('Email verification failed. Please check your OTP.');
     }
 };
@@ -74,7 +74,7 @@ export const resendOtp = async (email: string): Promise<ApiResponse> => {
     try {
         const response = await instance.post("/auth/resend-otp", { email });
         return await response.json();
-    } catch (error) {
+    } catch {
         throw new Error('Failed to resend OTP. Please try again.');
     }
 };
@@ -83,7 +83,7 @@ export const requestForgotPassword = async (email: string): Promise<ApiResponse>
     try {
         const response = await instance.post("/auth/request-forgot-password", { email });
         return await response.json();
-    } catch (error) {
+    } catch {
         throw new Error('Failed to send password reset email.');
     }
 };
@@ -92,7 +92,7 @@ export const forgotPasswordOtp = async (email: string, otp: string): Promise<Api
     try {
         const response = await instance.post("/auth/forgot-password-otp", { email, otp });
         return await response.json();
-    } catch (error) {
+    } catch {
         throw new Error('OTP verification failed. Please check your OTP.');
     }
 };
@@ -101,7 +101,7 @@ export const forgotPassword = async (email: string, password: string): Promise<A
     try {
         const response = await instance.post("/auth/forgot-password", { email, password });
         return await response.json();
-    } catch (error) {
+    } catch {
         throw new Error('Password reset failed. Please try again.');
     }
 };
@@ -110,7 +110,7 @@ export const refreshToken = async (refreshToken: string): Promise<AuthResponse> 
     try {
         const response = await instance.post("/auth/refresh-token", { refreshToken });
         return await response.json();
-    } catch (error) {
+    } catch {
         throw new Error('Token refresh failed. Please login again.');
     }
 };
@@ -119,7 +119,7 @@ export const getUserProfile = async (): Promise<ApiResponse> => {
     try {
         const response = await instance.get("/auth/profile");
         return await response.json();
-    } catch (error) {
+    } catch {
         throw new Error('Failed to fetch user profile.');
     }
 };

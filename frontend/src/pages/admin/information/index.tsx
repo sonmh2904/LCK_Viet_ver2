@@ -5,12 +5,10 @@ import { useRouter } from "next/router";
 import { AdminLayout } from "@/components/layout/admin-layout";
 import { 
   Search, 
-  Eye, 
-  Edit,
+  Eye,
   Calendar,
   User,
   Phone,
-  MapPin,
   CheckCircle,
   Clock,
   Filter,

@@ -1,7 +1,5 @@
 "use client"
 
-import { useState } from "react"
-import Image from "next/image"
 import { AboutMapSection } from "@/components/ui/home/about-map-section"
 import { FooterCTASection } from "@/components/ui/home/footer-cta-section"
 import { MaterialQuotationTable, sampleMaterialData, sampleFinishingData, sampleSanitaryData, sampleKitchenData, sampleStairsData, sampleTileData, sampleDoorData } from "@/components/ui/material-quotation-table"

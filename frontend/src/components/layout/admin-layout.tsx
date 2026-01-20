@@ -2,14 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { 
   FileText, 
-  Users, 
   Settings, 
   LogOut,
   Plus,
-  Home,
   Palette,
   FolderTree,
   ChevronRight,
@@ -24,7 +21,7 @@ interface AdminLayoutProps {
 
 export function AdminLayout({ children, title, description }: AdminLayoutProps) {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ fullname?: string; email: string; role: string } | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [expandedMenus, setExpandedMenus] = useState<Set<string>>(new Set());
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { createBlog } from "@/services/blog/blog.api";
 import { uploadImage } from "@/services/upload/upload.service";
 import { toast } from "sonner";
@@ -91,7 +92,7 @@ export function BlogCreateForm() {
     setFormData(prev => ({ ...prev, image: '' }));
   };
 
-  const updateContentBlock = (index: number, field: string, value: any) => {
+  const updateContentBlock = (index: number, field: string, value: string | boolean | File) => {
     const newContent = [...formData.content];
     newContent[index] = {
       ...newContent[index],
@@ -344,9 +345,11 @@ export function BlogCreateForm() {
               
               {(block.imagePreview || block.imageUrl) && (
                 <div className="relative inline-block">
-                  <img 
-                    src={block.imagePreview || block.imageUrl} 
+                  <Image 
+                    src={block.imagePreview || block.imageUrl || ''} 
                     alt="Preview" 
+                    width={128}
+                    height={128}
                     className="h-32 w-32 object-cover rounded-lg border border-gray-200"
                   />
                   <button
@@ -445,9 +448,11 @@ export function BlogCreateForm() {
                 
                 {(imagePreview || formData.image) && (
                   <div className="relative inline-block">
-                    <img 
-                      src={imagePreview || formData.image} 
+                    <Image 
+                      src={imagePreview || formData.image || ''} 
                       alt="Preview" 
+                      width={192}
+                      height={192}
                       className="h-48 w-48 object-cover rounded-lg border border-gray-200"
                     />
                     <button

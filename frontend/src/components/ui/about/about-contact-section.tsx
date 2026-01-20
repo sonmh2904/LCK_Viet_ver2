@@ -1,6 +1,7 @@
 "use client"
 
 import React from "react"
+import Image from "next/image"
 
 export function AboutContactSection() {
   return (
@@ -8,9 +9,11 @@ export function AboutContactSection() {
       <div className="container mx-auto px-4">
         {/* Banner Section */}
         <div className="mb-16 rounded-xl overflow-hidden shadow-lg">
-          <img 
+          <Image 
             src="/banner/banner-3.png" 
             alt="LCK VIỆT NAM" 
+            width={1200}
+            height={400}
             className="w-full h-auto object-cover"
           />
         </div>
@@ -28,7 +31,7 @@ export function AboutContactSection() {
           
           <div className="prose max-w-none text-gray-700 text-lg leading-relaxed">
             <p className="mb-8">
-              Chúng tôi tự hào là một trong những đơn vị tiên phong trong lĩnh vực kiến trúc và nội thất, đặc biệt nổi bật với <strong className="text-red-700">đội ngũ kiến trúc sư trẻ, sáng tạo và "thiện chiến"</strong> - đây chính là linh hồn của LCK Việt. Không chỉ sở hữu trình độ chuyên môn vững vàng và tư duy thiết kế độc đáo, đội ngũ KTS của chúng tôi còn mang trong mình ngọn lửa nhiệt huyết, luôn sẵn sàng đối mặt với mọi thách thức để kiến tạo nên những công trình xuất sắc nhất. Sự trẻ trung giúp chúng tôi không ngừng cập nhật xu hướng, dám nghĩ, dám làm và tạo ra những giá trị khác biệt, vượt xa mong đợi của khách hàng.
+              Chúng tôi tự hào là một trong những đơn vị tiên phong trong lĩnh vực kiến trúc và nội thất, đặc biệt nổi bật với <strong className="text-red-700">đội ngũ kiến trúc sư trẻ, sáng tạo và &ldquo;thiện chiến&rdquo;</strong> - đây chính là linh hồn của LCK Việt. Không chỉ sở hữu trình độ chuyên môn vững vàng và tư duy thiết kế độc đáo, đội ngũ KTS của chúng tôi còn mang trong mình ngọn lửa nhiệt huyết, luôn sẵn sàng đối mặt với mọi thách thức để kiến tạo nên những công trình xuất sắc nhất. Sự trẻ trung giúp chúng tôi không ngừng cập nhật xu hướng, dám nghĩ, dám làm và tạo ra những giá trị khác biệt, vượt xa mong đợi của khách hàng.
             </p>
             
             <p className="mb-8">

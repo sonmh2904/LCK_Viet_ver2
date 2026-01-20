@@ -88,7 +88,7 @@ export function AboutMapSection() {
               văn phòng, showroom và công trình thương mại.
             </p>
             <p>
-              Với phương châm <span className="font-semibold text-[#b30000]">"Kiến tạo không gian – Dựng xây giá trị bền vững"</span>, chúng tôi chú trọng tối ưu công năng và thẩm mỹ,
+              Với phương châm <span className="font-semibold text-[#b30000]">&ldquo;Kiến tạo không gian – Dựng xây giá trị bền vững&rdquo;</span>, chúng tôi chú trọng tối ưu công năng và thẩm mỹ,
               đảm bảo tính bền vững nhằm mang đến giá trị lâu dài cho từng dự án.
             </p>
             <p>

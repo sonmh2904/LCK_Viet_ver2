@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { AboutMapSection } from "@/components/ui/home/about-map-section"
 import { FooterCTASection } from "@/components/ui/home/footer-cta-section"
-import { Clock, Eye, ArrowLeft, Share2, TrendingUp } from "lucide-react";
+import { Clock, Eye, TrendingUp } from "lucide-react";
 import { getBlogBySlug, getTopViewedBlogs } from "@/services/blog/blog.api";
 import type { Blog } from "@/services/blog/blog.api";
 
@@ -15,7 +15,7 @@ export default function BlogDetailPage() {
   const [blog, setBlog] = useState<Blog | null>(null);
   const [featuredBlogs, setFeaturedBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!slug) return;
@@ -57,7 +57,15 @@ export default function BlogDetailPage() {
     return new Date(dateString).toLocaleDateString('vi-VN', options);
   };
 
-  const renderContent = (content: any[]) => {
+  const renderContent = (content: {
+    type: string;
+    text?: string;
+    bold?: boolean;
+    italic?: boolean;
+    fontSize?: string;
+    imageUrl?: string;
+    url?: string;
+  }[]) => {
     if (!content || !Array.isArray(content)) {
       return <p>Không có nội dung.</p>;
     }

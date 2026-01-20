@@ -99,7 +99,14 @@ function NewsPageContent() {
     return new Date(dateString).toLocaleDateString('vi-VN', options);
   };
 
-  const getContentExcerpt = (content: any[]): string => {
+  const getContentExcerpt = (content: {
+    type: string;
+    text?: string;
+    bold?: boolean;
+    italic?: boolean;
+    fontSize?: string;
+    imageUrl?: string;
+  }[]): string => {
     if (!content || content.length === 0) return '';
     
     // Find the first text block (paragraph, header, or bullet)

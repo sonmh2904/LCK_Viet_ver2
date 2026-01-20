@@ -1,6 +1,6 @@
 "use client"
 
-import { CheckCircle2, Phone, ShieldCheck, Users } from "lucide-react"
+import { CheckCircle2, ShieldCheck, Users } from "lucide-react"
 import { useState, useEffect } from "react"
 import { getProvinces, getWardsByProvinceCode, Province, Ward } from "@/services/address/address.api"
 import { addInformation, CreateInformationRequest } from "@/services/information/information.api"
@@ -143,20 +143,20 @@ export function ValuesContactSection() {
       } else {
         showToast(responseData.message || "Có lỗi xảy ra. Vui lòng thử lại.", "error")
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error submitting form:", error)
       
       // Try to parse error response
       let errorMessage = "Có lỗi xảy ra. Vui lòng thử lại."
-      if (error.response) {
+      if (error && typeof error === 'object' && 'response' in error) {
         try {
-          const errorData = await error.response.json()
+          const errorData = await (error as any).response.json()
           errorMessage = errorData.message || errorMessage
         } catch (parseError) {
           console.error("Error parsing error response:", parseError)
         }
-      } else if (error.message) {
-        errorMessage = error.message
+      } else if (error && typeof error === 'object' && 'message' in error) {
+        errorMessage = (error as any).message || errorMessage
       }
       
       showToast(errorMessage, "error")

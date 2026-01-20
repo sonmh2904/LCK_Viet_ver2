@@ -62,23 +62,23 @@ export const getWardsByProvinceCode = async (
           // Handle different response formats
           if (Array.isArray(data)) {
             return data.map((ward: { ward_name?: string; name?: string; district_name?: string; } | string) => ({
-              ward: typeof ward === 'string' ? ward : ward.ward_name || ward.name || ward.district_name || ward,
+              ward: typeof ward === 'string' ? ward : ward.ward_name || ward.name || ward.district_name || '',
             }));
           } else if (data.wards && Array.isArray(data.wards)) {
             return data.wards.map((ward: { ward_name?: string; name?: string; district_name?: string; } | string) => ({
-              ward: typeof ward === 'string' ? ward : ward.ward_name || ward.name || ward.district_name || ward,
+              ward: typeof ward === 'string' ? ward : ward.ward_name || ward.name || ward.district_name || '',
             }));
           } else if (data.data && Array.isArray(data.data)) {
             return data.data.map((ward: { ward_name?: string; name?: string; district_name?: string; } | string) => ({
-              ward: typeof ward === 'string' ? ward : ward.ward_name || ward.name || ward.district_name || ward,
+              ward: typeof ward === 'string' ? ward : ward.ward_name || ward.name || ward.district_name || '',
             }));
           } else if (data.districts && Array.isArray(data.districts)) {
             return data.districts.map((ward: { ward_name?: string; name?: string; district_name?: string; } | string) => ({
-              ward: typeof ward === 'string' ? ward : ward.ward_name || ward.name || ward.district_name || ward,
+              ward: typeof ward === 'string' ? ward : ward.ward_name || ward.name || ward.district_name || '',
             }));
           } else if (data.results && Array.isArray(data.results)) {
             return data.results.map((ward: { ward_name?: string; name?: string; district_name?: string; } | string) => ({
-              ward: typeof ward === 'string' ? ward : ward.ward_name || ward.name || ward.district_name || ward,
+              ward: typeof ward === 'string' ? ward : ward.ward_name || ward.name || ward.district_name || '',
             }));
           }
         }

@@ -312,7 +312,14 @@ function NewsPageContent() {
                             {post.title}
                           </h3>
                         </Link>
-                        <p className="text-gray-600 mb-4 line-clamp-3">{post.excerpt || getContentExcerpt(post.content)}</p>
+                        <p className="text-gray-600 mb-4 line-clamp-3">{post.excerpt || getContentExcerpt(post.content as {
+                          type: string;
+                          text?: string;
+                          bold?: boolean;
+                          italic?: boolean;
+                          fontSize?: string;
+                          imageUrl?: string;
+                        }[])}</p>
                         <Link
                           href={`/tin-tuc/${post.slug}`}
                           className="inline-flex items-center text-red-600 font-medium hover:text-red-700 transition-colors"

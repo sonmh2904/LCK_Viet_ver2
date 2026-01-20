@@ -10,7 +10,6 @@ import {
   Trash2, 
   Eye,
   Calendar,
-  User,
   MessageSquare,
   Star
 } from "lucide-react";

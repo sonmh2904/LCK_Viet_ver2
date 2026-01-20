@@ -243,7 +243,15 @@ export default function BlogDetailPage() {
 
                   {/* Article Content */}
                   <div className="prose prose-lg max-w-none">
-                    {renderContent(blog.content)}
+                    {renderContent(blog.content as {
+                      type: string;
+                      text?: string;
+                      bold?: boolean;
+                      italic?: boolean;
+                      fontSize?: string;
+                      imageUrl?: string;
+                      url?: string;
+                    }[])}
                   </div>
                 </div>
               </article>

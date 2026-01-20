@@ -3,6 +3,7 @@ const userAuthRouter = require("./auth/auth.router");
 
 const userRouter = require("./user/user.controller")
 const blogRouter = require("./blog/blog.route")
+const informationRouter = require("./information/information.route")
 
 module.exports = (app) => {
     const api = "/api/v1";
@@ -10,4 +11,5 @@ module.exports = (app) => {
     // app.use(api + "profile/", userProfileRouter);
     app.use(api + "/user", userRouter);
     app.use(api + "/blog", blogRouter);
+    app.use(api + "/information", informationRouter);
 }

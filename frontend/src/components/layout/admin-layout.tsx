@@ -12,7 +12,8 @@ import {
   Home,
   Palette,
   FolderTree,
-  ChevronRight
+  ChevronRight,
+  Phone
 } from "lucide-react";
 
 interface AdminLayoutProps {
@@ -66,6 +67,12 @@ export function AdminLayout({ children, title, description }: AdminLayoutProps) 
   };
 
   const menuItems = [
+    {
+      href: "/admin/information",
+      icon: Phone,
+      label: "Quản lý thông tin",
+      description: "Thông tin liên hệ khách hàng"
+    },
     {
       href: "/admin/blogs",
       icon: FileText,

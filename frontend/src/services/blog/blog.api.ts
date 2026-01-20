@@ -16,7 +16,7 @@ export interface Blog {
   _id: string;
   title: string;
   slug: string;
-  content: any[];
+  content: unknown[];
   excerpt?: string;
   image: string;
   status: string;
@@ -100,7 +100,7 @@ export const incrementBlogViews = async (blogId: string): Promise<void> => {
 
 export const createBlog = async (blogData: {
   title: string;
-  content: any[];
+  content: unknown[];
   image?: string;
   status?: string;
   isHighlight?: boolean;
@@ -144,20 +144,7 @@ export const createBlog = async (blogData: {
       throw new Error(`Invalid response format. Expected {code, data} or {_id} but got: ${JSON.stringify(Object.keys(result))}`);
     }
   } catch (error) {
-    console.error("Error creating blog:", error);
-    
-    // Try to get more error details if it's a fetch error
-    if (error instanceof Error && error.message.includes('non-JSON')) {
-      throw error;
-    }
-    
-    // For other errors, provide more context
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    console.error("Detailed error:", errorMessage);
-    
-    // Clean up localhost references from error message
-    const cleanErrorMessage = errorMessage.replace(/https?:\/\/localhost:[\d]+/g, '').replace(/http:\/\/localhost:[\d]+/g, '');
-    throw new Error(`Đã xảy ra lỗi khi tạo bài viết: ${cleanErrorMessage}`);
+    throw new Error("Đã xảy ra lỗi khi tạo bài viết");
   }
 };
 
@@ -165,7 +152,7 @@ export const updateBlog = async (
   slug: string,
   updateData: {
     title?: string;
-    content?: any[];
+    content?: unknown[];
     image?: string;
     status?: string;
     isHighlight?: boolean;
@@ -213,20 +200,7 @@ export const updateBlog = async (
       throw new Error("Invalid response format - not an object");
     }
   } catch (error) {
-    console.error(`Error updating blog ${slug}:`, error);
-    
-    // Try to get more error details if it's a fetch error
-    if (error instanceof Error && error.message.includes('non-JSON')) {
-      throw error;
-    }
-    
-    // For other errors, provide more context
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    console.error("Detailed error:", errorMessage);
-    
-    // Clean up localhost references from error message
-    const cleanErrorMessage = errorMessage.replace(/https?:\/\/localhost:[\d]+/g, '').replace(/http:\/\/localhost:[\d]+/g, '');
-    throw new Error(`Đã xảy ra lỗi khi cập nhật bài viết: ${cleanErrorMessage}`);
+    throw new Error("Đã xảy ra lỗi khi cập nhật bài viết");
   }
 };
 
@@ -236,11 +210,6 @@ export const deleteBlog = async (slug: string): Promise<boolean> => {
     const data = await response.json();
     return data.code === 200 || true; // Backend returns success flag or true
   } catch (error) {
-    console.error(`Error deleting blog ${slug}:`, error);
-    
-    // Clean up localhost references from error message
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
-    const cleanErrorMessage = errorMessage.replace(/https?:\/\/localhost:[\d]+/g, '').replace(/http:\/\/localhost:[\d]+/g, '');
     throw new Error("Đã xảy ra lỗi khi xóa bài viết");
   }
 };

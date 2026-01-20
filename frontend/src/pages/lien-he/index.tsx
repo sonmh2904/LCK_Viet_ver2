@@ -1,6 +1,5 @@
 "use client"
 
-import Image from "next/image"
 import { useState, useEffect } from "react"
 import { getProvinces, getWardsByProvinceCode, Province, Ward } from "@/services/address/address.api"
 
@@ -18,11 +17,6 @@ const CONTACT_INFO = {
 const MAP_SRC =
   "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d3723.9516336600533!2d105.8334684!3d20.9718875!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ac57226f8f6b:0x4500e93184d4a341!2sNg.+172+P.+%C4%90%E1%BA%A1i+T%E1%BB%AB,+%C4%90%E1%BA%A1i+T%E1%BB%AB,+%C4%90%E1%BA%A1i+Kim,+Ho%C3%A0ng+Mai,+H%C3%A0+N%E1%BB%99i,+Vietnam!5e0!3m2!1svi!2s!4v1736679600000!5m2!1svi!2s"
 
-const QUICK_LINKS = [
-  { icon: "phone", label: "Hotline", value: CONTACT_INFO.hotline, href: `tel:${CONTACT_INFO.hotline.replace(/\./g, "")}` },
-  { icon: "call", label: "Điện thoại", value: CONTACT_INFO.phone, href: `tel:${CONTACT_INFO.phone.replace(/\./g, "")}` },
-  { icon: "mail", label: "Email", value: CONTACT_INFO.email, href: `mailto:${CONTACT_INFO.email}` },
-]
 
 const formFields = [
   { name: "fullname", placeholder: "Họ và tên (*)" },

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import Link from "next/link"
+import Image from "next/image"
 import { FaUser, FaFileAlt, FaCalendarAlt, FaMapMarkerAlt } from 'react-icons/fa'
 import { AboutMapSection } from "@/components/ui/home/about-map-section"
 import { FooterCTASection } from "@/components/ui/home/footer-cta-section"
@@ -146,9 +146,11 @@ export default function HomePage() {
               <div key={project.id} className="bg-white rounded-lg shadow-md hover:shadow-xl transition-shadow group">
                 {/* Project Image */}
                 <div className="relative h-64 overflow-hidden">
-                  <img
+                  <Image
                     src={project.image}
                     alt={project.title}
+                    width={400}
+                    height={256}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>

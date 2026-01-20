@@ -2,54 +2,10 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import Link from "next/link"
 import { AboutMapSection } from "@/components/ui/home/about-map-section"
 import { FooterCTASection } from "@/components/ui/home/footer-cta-section"
-import { QuotationTable, sampleQuotationData, sampleQuotationData2 } from "@/components/ui/quotation-table"
 import { MaterialQuotationTable, sampleMaterialData, sampleFinishingData, sampleSanitaryData, sampleKitchenData, sampleStairsData, sampleTileData, sampleDoorData } from "@/components/ui/material-quotation-table"
 
-const PROCESS_STEPS = [
-  {
-    id: 1,
-    title: "Khảo sát & Lên ý tưởng",
-    description: "Đội ngũ kỹ sư đến tận nơi khảo sát, đo đạc và lắng nghe nhu cầu của khách hàng",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 20l-5.447-2.724A1 1 0 01 3 16.382V5.618a1 1 0 011.447-.894L9 2m0 0l5.447 2.724A1 1 0 0116 5.618v10.764a1 1 0 01-.447.894L9 20m0 0V2m0 18l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 2m0 0l5.447 2.724A1 1 0 0116 5.618v10.764a1 1 0 01-.447.894L9 20" />
-      </svg>
-    ),
-  },
-  {
-    id: 2,
-    title: "Thiết kế & Báo giá",
-    description: "Lên bản vẽ 2D, 3D và gửi báo giá chi tiết, minh bạch cho khách hàng duyệt",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V6a2 2 0 00-2-2h-1m-6 0l4 4m0 0l-4-4m4 4v6" />
-      </svg>
-    ),
-  },
-  {
-    id: 3,
-    title: "Ký kết & Thi công",
-    description: "Kết hợp đồng, tiến hành thi công theo đúng bản vẽ đã được duyệt và tiến độ cam kết",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-      </svg>
-    ),
-  },
-  {
-    id: 4,
-    title: "Nghiệm thu & Bàn giao",
-    description: "Kiểm tra chất lượng, nghiệm thu với khách hàng và bàn giao công trình đúng cam kết",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0zm-9 2a2 2 0 100-4 2 2 0 000 4z" />
-      </svg>
-    ),
-  },
-]
 
 export default function BaoGiaThiCongPage() {
   return (

@@ -1,7 +1,6 @@
 "use client"
 
 import { HeroSection } from "@/components/ui/home/hero-section"
-import { StatsSection } from "@/components/ui/home/stats-section"
 import { ServicesSection } from "@/components/ui/home/services-section"
 import { ProjectCategoriesSection } from "@/components/ui/home/project-categories-section"
 import { FeaturedProjectsSection } from "@/components/ui/home/featured-projects-section"

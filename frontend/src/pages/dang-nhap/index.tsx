@@ -1,4 +1,5 @@
 import { LoginForm } from "@/components/ui/loginForm"
+import Image from "next/image"
 
 export default function LoginPage() {
   return (
@@ -6,10 +7,12 @@ export default function LoginPage() {
       {/* Left side - Background Image */}
       <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center p-12">
         <div className="absolute inset-0">
-          <img 
+          <Image 
             src="/highlight/hl2.jpg" 
             alt="LCK Design Background" 
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
+            priority
           />
           <div className="absolute inset-0 bg-gradient-to-br from-blue-900/80 to-purple-900/80"></div>
         </div>

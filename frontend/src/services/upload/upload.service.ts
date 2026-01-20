@@ -1,5 +1,3 @@
-import instance from "../customizeAPI";
-
 export interface UploadResponse {
   code: number;
   message: string;

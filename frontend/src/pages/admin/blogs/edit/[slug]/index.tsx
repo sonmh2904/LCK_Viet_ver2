@@ -58,10 +58,16 @@ export default function EditBlog() {
     try {
       setLoading(true);
       const data = await getBlogBySlug(slug);
-      setBlog(data);
+      setBlog(data as {
+        title: string;
+        content: ContentBlock[];
+        image: string;
+        status: string;
+        isHighlight?: boolean;
+      });
       setFormData({
         title: data.title || "",
-        content: data.content || [],
+        content: (data.content as ContentBlock[]) || [],
         image: data.image || "",
         status: (data.status || "active") as "active" | "inactive" | "draft",
         isHighlight: data.isHighlight || false
@@ -165,17 +171,6 @@ export default function EditBlog() {
     }));
   };
 
-  const handleContentChange = (index: number, field: string, value: string | boolean | File) => {
-    const newContent = [...formData.content];
-    newContent[index] = {
-      ...newContent[index],
-      [field]: value
-    };
-    setFormData(prev => ({
-      ...prev,
-      content: newContent
-    }));
-  };
 
   const addContentBlock = (type: "paragraph" | "header" | "bullet" | "image" = "paragraph") => {
     const newBlock: ContentBlock = {
@@ -275,7 +270,7 @@ export default function EditBlog() {
     }
   };
 
-  const renderContentBlock = (block: any, index: number) => {
+  const renderContentBlock = (block: ContentBlock, index: number) => {
     switch (block.type) {
       case "paragraph":
         return (

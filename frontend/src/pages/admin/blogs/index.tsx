@@ -6,14 +6,12 @@ import { AdminLayout } from "@/components/layout/admin-layout";
 import { 
   Plus, 
   Search, 
-  Filter, 
   Edit, 
   Trash2, 
   Eye,
   Calendar,
   User,
   MessageSquare,
-  TrendingUp,
   Star
 } from "lucide-react";
 import { getAllBlogs, deleteBlog, updateBlog, Blog } from "@/services/blog/blog.api";
@@ -69,7 +67,7 @@ export default function BlogManagement() {
 
   const handleToggleHighlight = async (blog: Blog) => {
     try {
-      const updatedBlog = await updateBlog(blog.slug, {
+      await updateBlog(blog.slug, {
         title: blog.title,
         content: blog.content,
         image: blog.image,

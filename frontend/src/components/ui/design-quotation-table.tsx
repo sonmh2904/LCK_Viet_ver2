@@ -1,7 +1,5 @@
 "use client"
 
-import { useState } from "react"
-
 interface DesignItem {
   id: number
   stt: string
@@ -14,10 +12,9 @@ interface DesignItem {
 interface DesignQuotationTableProps {
   title: string
   items: DesignItem[]
-  showTotal?: boolean
 }
 
-export function DesignQuotationTable({ title, items, showTotal = true }: DesignQuotationTableProps) {
+export function DesignQuotationTable({ title, items }: DesignQuotationTableProps) {
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-8">
       {/* Table Header */}

@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { 
   FileText, 
-  Settings, 
   LogOut,
   Plus,
   Palette,

@@ -2,8 +2,6 @@
 
 import Image from "next/image"
 
-import { SectionHeading } from "@/components/ui/section-heading"
-
 const CORE_VALUES = [
   "Đồng hành cùng khách hàng từ tư vấn, thiết kế đến thi công hoàn thiện",
   "Ứng dụng công nghệ và vật liệu tiên tiến, đảm bảo độ bền và tính thẩm mỹ",

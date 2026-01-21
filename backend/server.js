@@ -9,7 +9,8 @@ require("dotenv").config();
 
 const corsOptions = {
   origin: [
-    process.env.FRONTEND_URL || "https://lck-viet-version1.onrender.com/",
+    "https://lck-viet-ver2.vercel.app",
+    "https://lck-viet-ver2-17.onrender.com",
     "http://localhost:3000",
     "http://127.0.0.1:3000"
   ],

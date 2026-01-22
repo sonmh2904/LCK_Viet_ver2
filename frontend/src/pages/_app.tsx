@@ -29,8 +29,6 @@ export default function App({ Component, pageProps }: AppProps) {
       "/tin-tuc": "Tin tức - LCK Việt",
       "/lien-he": "Liên hệ - LCK Việt",
       "/thiet-ke": "Thiết kế - LCK Việt",
-      "/thiet-ke/noi-that": "Thiết kế nội thất - LCK Việt",
-      "/thiet-ke/ngoai-that": "Thiết kế ngoại thất - LCK Việt",
       "/bao-gia": "Báo giá - LCK Việt",
       "/bao-gia/thiet-ke": "Báo giá thiết kế - LCK Việt",
       "/bao-gia/thi-cong": "Báo giá thi công - LCK Việt",
@@ -45,6 +43,8 @@ export default function App({ Component, pageProps }: AppProps) {
       // Handle dynamic routes (like blog posts, etc.)
       if (path.startsWith("/tin-tuc/")) {
         title = "Tin tức chi tiết - LCK Việt - Kiến tạo tương lai";
+      } else if (path.startsWith("/thiet-ke/")) {
+        title = "Chi tiết thiết kế - LCK Việt - Kiến tạo tương lai";
       } else if (path.startsWith("/admin")) {
         title = "Quản trị - LCK Việt - Kiến tạo tương lai";
       }

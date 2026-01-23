@@ -10,6 +10,8 @@ require("dotenv").config();
 const corsOptions = {
   origin: [
     "https://lck-viet-ver2.vercel.app",
+    "https://lckviet.vercel.app",
+    "https://lckviet.id.vn",
     "http://localhost:3000",
     "http://127.0.0.1:3000"
   ],

@@ -122,7 +122,7 @@ export function Footer() {
               <li className="flex items-start gap-3">
                 <span className="mt-1 h-2 w-2 rounded-full bg-white/80" />
                 <span>
-                  Địa chỉ: 172 phố Đại Từ, phường Đại Kim, quận Hoàng Mai, thành phố Hà Nội<br />
+                  Địa chỉ: 172 phố Đại Từ, phường Định Công, thành phố Hà Nội<br />
                 </span>
               </li>
               <li className="flex items-start gap-3">

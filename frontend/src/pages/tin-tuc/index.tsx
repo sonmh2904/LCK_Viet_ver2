@@ -242,8 +242,6 @@ function NewsPageContent() {
                           <div className="flex items-center text-sm text-gray-300">
                             <Clock size={16} className="mr-1" />
                             <span className="mr-4">{formatDate(post.createdAt)}</span>
-                            <Eye size={16} className="mr-1" />
-                            <span>{post.views || 0} lượt xem</span>
                           </div>
                         </div>
                       </div>
@@ -303,9 +301,6 @@ function NewsPageContent() {
                         <div className="flex items-center text-sm text-gray-500 mb-3">
                           <Clock size={14} className="mr-1" />
                           <span>{formatDate(post.createdAt)}</span>
-                          <span className="mx-2">•</span>
-                          <Eye size={14} className="mr-1" />
-                          <span>{post.views || 0} lượt xem</span>
                         </div>
                         <Link href={`/tin-tuc/${post.slug}`}>
                           <h3 className="text-xl font-bold text-gray-800 mb-2 hover:text-red-600 transition-colors line-clamp-2">

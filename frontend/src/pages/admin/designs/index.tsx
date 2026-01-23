@@ -13,7 +13,8 @@ import {
   Calendar,
   Building,
   MapPin,
-  User
+  User,
+  Star
 } from "lucide-react";
 import { designAPI, Design } from "@/services/design/design.api";
 import { toast } from "sonner";
@@ -24,15 +25,17 @@ export default function DesignManagement() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
+  const [showHighlightOnly, setShowHighlightOnly] = useState(false);
   const [categories, setCategories] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [totalItems, setTotalItems] = useState(0);
+  const [deleteModal, setDeleteModal] = useState<{ open: boolean; design: Design | null }>({ open: false, design: null });
 
   useEffect(() => {
     fetchDesigns();
     fetchCategories();
-  }, [currentPage, searchQuery]);
+  }, [currentPage, searchQuery, showHighlightOnly]);
 
   const fetchCategories = async () => {
     try {
@@ -71,6 +74,15 @@ export default function DesignManagement() {
         params.categories = selectedCategory;
       }
 
+      if (showHighlightOnly) {
+        // Use highlight designs endpoint when highlight filter is active
+        const response = await designAPI.getHighlightDesigns({ page: currentPage, limit: 10 });
+        setDesigns(response.data.designs);
+        setTotalPages(response.data.pagination.totalPages);
+        setTotalItems(response.data.pagination.totalItems);
+        return;
+      }
+
       const response = await designAPI.getDesigns(params);
       setDesigns(response.data.designs);
       setTotalPages(response.data.pagination.totalPages);
@@ -91,17 +103,39 @@ export default function DesignManagement() {
     router.push(`/admin/designs/edit/${design._id}`);
   };
 
-  const handleDeleteDesign = async (design: Design) => {
-    if (confirm(`Bạn có chắc muốn xóa thiết kế "${design.projectName}"?`)) {
-      try {
-        await designAPI.deleteDesign(design._id);
-        setDesigns(designs.filter(d => d._id !== design._id));
-        setTotalItems(totalItems - 1);
-        toast.success("Xóa thiết kế thành công");
-      } catch (error) {
-        toast.error("Không thể xóa thiết kế");
-        console.error(error);
-      }
+  const handleDeleteDesign = (design: Design) => {
+    setDeleteModal({ open: true, design });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteModal.design) return;
+    
+    try {
+      await designAPI.deleteDesign(deleteModal.design!._id);
+      setDesigns(designs.filter(d => d._id !== deleteModal.design!._id));
+      setTotalItems(totalItems - 1);
+      toast.success("Xóa thiết kế thành công");
+      setDeleteModal({ open: false, design: null });
+    } catch (error) {
+      toast.error("Không thể xóa thiết kế");
+      console.error(error);
+    }
+  };
+
+  const cancelDelete = () => {
+    setDeleteModal({ open: false, design: null });
+  };
+
+  const handleToggleHighlight = async (design: Design) => {
+    try {
+      await designAPI.updateDesign(design._id, { isHighlight: !design.isHighlight });
+      setDesigns(designs.map(d => 
+        d._id === design._id ? { ...d, isHighlight: !d.isHighlight } : d
+      ));
+      toast.success(design.isHighlight ? "Đã bỏ đánh dấu nổi bật" : "Đã đánh dấu nổi bật");
+    } catch (error) {
+      toast.error("Không thể cập nhật trạng thái nổi bật");
+      console.error(error);
     }
   };
 
@@ -199,15 +233,15 @@ export default function DesignManagement() {
         <div className="bg-white rounded-lg border border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div className="p-3 bg-yellow-50 rounded-lg">
-              <Calendar className="w-6 h-6 text-yellow-600" />
+              <Star className="w-6 h-6 text-yellow-600" />
             </div>
-            <span className="text-sm font-medium text-gray-600">0%</span>
+            <span className="text-sm font-medium text-yellow-600">+{designs.filter(design => design.isHighlight).length}</span>
           </div>
           <div className="mt-4">
             <div className="text-2xl font-bold text-gray-900">
-              {designs.filter(d => d.implementationYear === new Date().getFullYear()).length}
+              {designs.filter(design => design.isHighlight).length}
             </div>
-            <div className="text-sm text-gray-600">Năm nay</div>
+            <div className="text-sm text-gray-600">Thiết kế nổi bật</div>
           </div>
         </div>
       </div>
@@ -276,6 +310,9 @@ export default function DesignManagement() {
                   Năm thực hiện
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Nổi bật
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Hình ảnh
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -320,6 +357,19 @@ export default function DesignManagement() {
                     </div>
                   </td>
                   <td className="px-6 py-4">
+                    <button
+                      onClick={() => handleToggleHighlight(design)}
+                      className={`p-1 rounded-full transition-colors ${
+                        design.isHighlight 
+                          ? "text-yellow-500 hover:text-yellow-600" 
+                          : "text-gray-300 hover:text-yellow-500"
+                      }`}
+                      title={design.isHighlight ? "Bỏ nổi bật" : "Đặt nổi bật"}
+                    >
+                      <Star className="w-4 h-4" fill={design.isHighlight ? "currentColor" : "none"} />
+                    </button>
+                  </td>
+                  <td className="px-6 py-4">
                     <div className="flex items-center">
                       {design.mainImage && (
                         <img 
@@ -339,13 +389,13 @@ export default function DesignManagement() {
                           >
                             <Eye className="h-4 w-4" />
                           </Link>
-                          <Link
-                            href={`/admin/designs/edit/${design._id}`}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                          <button
+                            onClick={() => handleEditDesign(design)}
+                            className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                             title="Chỉnh sửa"
                           >
                             <Edit className="h-4 w-4" />
-                          </Link>
+                          </button>
                           <button
                             onClick={() => handleDeleteDesign(design)}
                             className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
@@ -354,7 +404,7 @@ export default function DesignManagement() {
                             <Trash2 className="h-4 w-4" />
                           </button>
                         </div>
-                      </td>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -428,6 +478,45 @@ export default function DesignManagement() {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal.open && (
+        <div className="fixed inset-0 bg-gray-100 bg-opacity-5 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="flex items-center mb-4">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                <Trash2 className="w-6 h-6 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Xóa thiết kế</h3>
+                <p className="text-sm text-gray-600">Bạn có chắc muốn xóa thiết kế này?</p>
+              </div>
+            </div>
+            
+            {deleteModal.design && (
+              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                <p className="font-medium text-gray-900">{deleteModal.design.projectName}</p>
+                <p className="text-sm text-gray-600">{deleteModal.design.projectType}</p>
+              </div>
+            )}
+            
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded-lg transition-colors"
+              >
+                Xóa
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 }

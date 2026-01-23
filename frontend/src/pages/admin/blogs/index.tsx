@@ -21,19 +21,47 @@ export default function BlogManagement() {
   const [blogs, setBlogs] = useState<Blog[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [deleteModal, setDeleteModal] = useState<{ open: boolean; blog: Blog | null }>({ open: false, blog: null });
 
   useEffect(() => {
     fetchBlogs();
-  }, []);
+  }, [currentPage, searchQuery]);
 
   const fetchBlogs = async () => {
     try {
       setLoading(true);
-      const data = await getAllBlogs();
-      setBlogs(data);
+      const params = {
+        page: currentPage,
+        limit: 10,
+        search: searchQuery
+      };
+      const response = await getAllBlogs(params) as any;
+      
+      // Handle different response formats
+      if (Array.isArray(response)) {
+        // Direct array response
+        setBlogs(response);
+        setTotalPages(1);
+        setTotalItems(response.length);
+      } else if (response && response.data) {
+        // Object with data property
+        setBlogs(response.data.blogs || response.data);
+        setTotalPages(response.data.pagination?.totalPages || 1);
+        setTotalItems(response.data.pagination?.totalItems || response.data.length || 0);
+      } else {
+        setBlogs([]);
+        setTotalPages(1);
+        setTotalItems(0);
+      }
     } catch (error) {
       toast.error("Không thể tải danh sách bài viết");
       console.error(error);
+      setBlogs([]);
+      setTotalPages(1);
+      setTotalItems(0);
     } finally {
       setLoading(false);
     }
@@ -47,21 +75,35 @@ export default function BlogManagement() {
     router.push(`/admin/blogs/edit/${blog.slug}`);
   };
 
-  const handleDeleteBlog = async (blog: Blog) => {
-    if (confirm(`Bạn có chắc muốn xóa bài viết "${blog.title}"?`)) {
-      try {
-        await deleteBlog(blog.slug);
-        setBlogs(blogs.filter(b => b.slug !== blog.slug));
-        toast.success("Xóa bài viết thành công");
-      } catch (error) {
-        toast.error("Không thể xóa bài viết");
-        console.error(error);
-      }
+  const handleDeleteBlog = (blog: Blog) => {
+    setDeleteModal({ open: true, blog });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteModal.blog) return;
+    
+    try {
+      await deleteBlog(deleteModal.blog!.slug);
+      setBlogs(blogs.filter(b => b.slug !== deleteModal.blog!.slug));
+      toast.success("Xóa bài viết thành công");
+      setDeleteModal({ open: false, blog: null });
+    } catch (error) {
+      toast.error("Không thể xóa bài viết");
+      console.error(error);
     }
   };
 
+  const cancelDelete = () => {
+    setDeleteModal({ open: false, blog: null });
+  };
+
   const handleSearch = () => {
+    setCurrentPage(1);
     fetchBlogs();
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   const handleToggleHighlight = async (blog: Blog) => {
@@ -86,10 +128,6 @@ export default function BlogManagement() {
     }
   };
 
-  const filteredBlogs = blogs.filter(blog => 
-    blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    blog.slug.toLowerCase().includes(searchQuery.toLowerCase())
-  );
 
   if (loading) {
     return (
@@ -238,11 +276,11 @@ export default function BlogManagement() {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredBlogs.map((blog) => (
+              {blogs.map((blog, index) => (
                 <tr key={blog._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4">
                     <div className="text-sm font-medium text-gray-900">
-                      {filteredBlogs.indexOf(blog) + 1}
+                      {index + 1}
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -336,7 +374,7 @@ export default function BlogManagement() {
           </table>
         </div>
 
-        {filteredBlogs.length === 0 && (
+        {blogs.length === 0 && (
           <div className="text-center py-12">
             <Edit className="w-12 h-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">Không có bài viết nào</h3>
@@ -359,10 +397,90 @@ export default function BlogManagement() {
 
         <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
           <div className="text-sm text-gray-700">
-            Hiển thị {filteredBlogs.length} của {blogs.length} bài viết
+            Hiển thị {blogs.length} của {totalItems} bài viết
           </div>
+          
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex items-center space-x-2">
+              <button
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                  currentPage === 1
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                Trước
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                    currentPage === page
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+              <button
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+                className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
+                  currentPage === totalPages
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                }`}
+              >
+                Sau
+              </button>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal.open && (
+        <div className="fixed inset-0 bg-gray-100 bg-opacity-5 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="flex items-center mb-4">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                <Trash2 className="w-6 h-6 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Xóa bài viết</h3>
+                <p className="text-sm text-gray-600">Bạn có chắc muốn xóa bài viết này?</p>
+              </div>
+            </div>
+            
+            {deleteModal.blog && (
+              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                <p className="font-medium text-gray-900 line-clamp-2">{deleteModal.blog.title}</p>
+                <p className="text-sm text-gray-600">{deleteModal.blog.slug}</p>
+              </div>
+            )}
+            
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded-lg transition-colors"
+              >
+                Xóa
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 }

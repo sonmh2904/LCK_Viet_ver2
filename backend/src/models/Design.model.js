@@ -71,6 +71,10 @@ const designSchema = new Schema({
     ref: 'Category',
     required: true,
   },
+  isHighlight: {
+    type: Boolean,
+    default: false,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

@@ -1,96 +1,145 @@
 "use client"
 
-import { ArrowRightCircle, BadgeCheck, CheckCircle2, MapPin } from "lucide-react"
+import { useState, useEffect } from "react"
+import Image from "next/image"
 
-const featuredProjects = [
-  {
-    name: "Biệt thự song lập Ecopark",
-    location: "Hưng Yên",
-    area: "320m²",
-    description: "Thiết kế kiến trúc hiện đại kết hợp mảng xanh thiên nhiên, kính bao quanh mở rộng không gian.",
-    image:
-      "https://images.unsplash.com/photo-1599423300746-b62533397364?auto=format&fit=crop&w=1200&q=80",
-  },
-  {
-    name: "Nhà phố thương mại Vinhome",
-    location: "Hà Nội",
-    area: "185m²",
-    description: "Tối ưu mặt tiền kinh doanh, gam đỏ đặc trưng giúp nhận diện thương hiệu nổi bật.",
-    image:
-      "https://www.daaninterior.com/wp-content/uploads/2020/01/shophouse-vincom-my-tho.jpg",
-  },
-  {
-    name: "Resort ven biển An Giang",
-    location: "Phú Quốc",
-    area: "2.600m²",
-    description: "Không gian nghỉ dưỡng cao cấp, chuỗi tiện ích khép kín và cảnh quan bản địa.",
-    image:
-      "https://images.unsplash.com/photo-1505691938895-1758d7feb511?auto=format&fit=crop&w=1200&q=80",
-  },
-]
+type ProjectImage = {
+  id: number
+  src: string
+  alt: string
+}
 
 export function FeaturedProjectsSection() {
-  return (
-    <section className="relative bg-white py-24">
-      <div className="absolute inset-0 bg-gradient-to-br from-white via-white to-[#ffe9e2]" />
-      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-10 px-6">
-        <div className="flex flex-col gap-4 text-center md:flex-row md:items-end md:justify-between md:text-left">
-          <div>
-            <p className="inline-flex items-center gap-2 rounded-full bg-[#ffe0d9] px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-[#b30000]">
-              Công trình tiêu biểu 2025
-            </p>
-            <h2 className="mt-4 text-4xl font-bold text-slate-900 sm:text-5xl">
-              Dấu ấn thiết kế – thi công chuẩn LCK Việt
-            </h2>
-            <p className="mt-3 max-w-2xl text-base text-slate-600">
-              Các dự án được chọn lọc kỹ lưỡng phản ánh năng lực thiết kế, tổ chức thi công, cũng như sự hài lòng của khách hàng trên khắp cả nước.
-            </p>
-          </div>
-          <div className="flex flex-col gap-2 text-sm text-slate-500">
-            <span className="inline-flex items-center gap-2 text-[#b30000]">
-              <BadgeCheck className="h-4 w-4" />
-              Đối tác chiến lược của hơn 20 thương hiệu vật liệu uy tín
-            </span>
-            <span className="inline-flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4" />
-              Bảo hành công trình tối thiểu 2 năm
-            </span>
-          </div>
-        </div>
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
 
-        <div className="grid gap-8 lg:grid-cols-3">
-          {featuredProjects.map((project) => (
-            <article
-              key={project.name}
-              className="group flex h-full flex-col overflow-hidden rounded-3xl border border-[#ffd1c4] bg-white shadow-[0_30px_90px_-70px_rgba(179,0,0,0.7)] transition-transform hover:-translate-y-2"
-            >
-              <div className="relative h-60 overflow-hidden">
-                <img
-                  src={project.image}
-                  alt={project.name}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#8a0303]/70 via-transparent to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 px-6 pb-6 text-white">
-                  <p className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.35em] text-white/80">
-                    <MapPin className="h-4 w-4" />
-                    {project.location}
-                  </p>
-                  <h3 className="mt-3 text-2xl font-semibold">{project.name}</h3>
+  // Project images data
+  const projects: ProjectImage[] = Array.from({ length: 9 }, (_, i) => ({
+    id: i + 1,
+    src: `/highlight/hl${i + 1}.jpg`,
+    alt: `Dự án nổi bật ${i + 1} của LCK Việt`,
+  }))
+
+  // Auto-rotate projects
+  useEffect(() => {
+    if (isPaused) return
+    
+    const timer = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % projects.length)
+    }, 3000)
+
+    return () => clearInterval(timer)
+  }, [isPaused, projects.length])
+
+  const handlePrev = () => {
+    setCurrentIndex((prevIndex) => 
+      prevIndex === 0 ? projects.length - 1 : prevIndex - 1
+    )
+  }
+
+  const handleNext = () => {
+    setCurrentIndex((prevIndex) => (prevIndex + 1) % projects.length)
+  }
+
+  // Calculate visible projects (2 before and 2 after current index)
+  const getVisibleProjects = () => {
+    const visible = []
+    const length = projects.length
+    
+    for (let i = -2; i <= 2; i++) {
+      const index = (currentIndex + i + length) % length
+      visible.push({
+        ...projects[index],
+        isCenter: i === 0,
+        position: i
+      })
+    }
+    
+    return visible
+  }
+
+  return (
+    <section className="py-16 bg-white">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col items-center mb-12">
+          <span className="inline-flex items-center rounded-full bg-[#b30000]/10 px-5 py-1 text-xs font-semibold uppercase tracking-[0.35em] text-[#b30000] mb-4">
+            Bộ sưu tập
+          </span>
+          <h2 className="text-4xl font-bold uppercase tracking-wider text-[#b30000] sm:text-5xl font-sans italic drop-shadow text-center">
+            Những dự án đã thực hiện
+          </h2>
+        </div>
+        
+        <div 
+          className="relative h-[500px] max-w-6xl mx-auto"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+        >
+          <div className="h-full flex items-center justify-center">
+            <div className="relative w-full h-full flex items-center justify-center">
+              {getVisibleProjects().map((project) => (
+                <div
+                  key={project.id}
+                  className={`absolute transition-all duration-500 ease-in-out ${
+                    project.isCenter 
+                      ? 'z-10 scale-110 shadow-2xl' 
+                      : 'opacity-80 scale-90'
+                  } ${project.position === -2 ? '-translate-x-[150%]' : ''}
+                     ${project.position === -1 ? '-translate-x-[75%]' : ''}
+                     ${project.position === 1 ? 'translate-x-[75%]' : ''}
+                     ${project.position === 2 ? 'translate-x-[150%]' : ''}
+                     cursor-pointer hover:opacity-100`}
+                  onClick={() => setCurrentIndex(projects.findIndex(p => p.id === project.id))}
+                >
+                  <div className={`relative ${
+                    project.isCenter ? 'w-[400px] h-[300px]' : 'w-[300px] h-[225px]'
+                  } rounded-lg overflow-hidden`}>
+                    <Image
+                      src={project.src}
+                      alt={project.alt}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      priority={project.isCenter}
+                    />
+                  </div>
                 </div>
-              </div>
-              <div className="flex flex-1 flex-col gap-5 p-6 text-slate-600">
-                <p>{project.description}</p>
-                <div className="flex items-center justify-between text-sm font-semibold text-[#b30000]">
-                  <span>Diện tích: {project.area}</span>
-                  <button className="inline-flex items-center gap-2 uppercase tracking-[0.3em]">
-                    Chi tiết
-                    <ArrowRightCircle className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            </article>
-          ))}
+              ))}
+            </div>
+          </div>
+          
+          <button 
+            onClick={handlePrev}
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-red-700 p-2 rounded-full shadow-lg z-20"
+            aria-label="Previous project"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          
+          <button 
+            onClick={handleNext}
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-red-700 p-2 rounded-full shadow-lg z-20"
+            aria-label="Next project"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+          
+          <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-20">
+            {projects.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => setCurrentIndex(index)}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  index === currentIndex ? 'bg-red-700 w-8 h-1.5 -mt-0.5' : 'bg-gray-300'
+                }`}
+                aria-label={`Go to project ${index + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>

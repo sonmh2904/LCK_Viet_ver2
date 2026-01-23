@@ -265,11 +265,7 @@ export default function InformationManagement() {
                           : item.province || item.district || "—"
                         }
                       </div>
-                      {item.description && (
-                        <div className="text-sm text-gray-500 truncate max-w-xs">
-                          {item.description}
-                        </div>
-                      )}
+                     
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getStatusBadge(item.status)}

@@ -93,7 +93,8 @@ const createDesign = async (req, res) => {
             functionality,
             designUnit,
             detailedDescription,
-            categories
+            categories,
+            isHighlight
         } = req.body;
 
         // Validate required fields
@@ -169,7 +170,8 @@ const createDesign = async (req, res) => {
             functionality,
             designUnit,
             detailedDescription,
-            categories
+            categories,
+            isHighlight: isHighlight || false
         });
 
         console.log('Saving design to database...');
@@ -328,6 +330,14 @@ const updateDesign = async (req, res) => {
             return res.status(400).json({
                 code: 400,
                 message: 'ID danh mục không hợp lệ'
+            });
+        }
+
+        // Validate isHighlight if provided
+        if (updateData.isHighlight !== undefined && typeof updateData.isHighlight !== 'boolean') {
+            return res.status(400).json({
+                code: 400,
+                message: 'isHighlight phải là giá trị boolean'
             });
         }
 
@@ -500,11 +510,48 @@ const getDesignsByCategory = async (req, res) => {
     }
 };
 
+// GET HIGHLIGHT DESIGNS - Lấy các thiết kế nổi bật
+const getHighlightDesigns = async (req, res) => {
+    try {
+        const { page = 1, limit = 10 } = req.query;
+        
+        const designs = await Design.find({ isHighlight: true })
+            .populate('categories', 'name slug')
+            .sort({ createdAt: -1 })
+            .limit(limit * 1)
+            .skip((page - 1) * limit);
+
+        const total = await Design.countDocuments({ isHighlight: true });
+
+        res.json({
+            code: 200,
+            message: 'Lấy danh sách thiết kế nổi bật thành công',
+            data: {
+                designs,
+                pagination: {
+                    currentPage: parseInt(page),
+                    totalPages: Math.ceil(total / limit),
+                    totalItems: total,
+                    itemsPerPage: parseInt(limit)
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Error getting highlight designs:', error);
+        res.status(500).json({
+            code: 500,
+            message: 'Lỗi server khi lấy danh sách thiết kế nổi bật',
+            error: error.message
+        });
+    }
+};
+
 module.exports = {
     createDesign,
     getAllDesigns,
     getDesignById,
     getDesignsByCategory,
     updateDesign,
-    deleteDesign
+    deleteDesign,
+    getHighlightDesigns
 };

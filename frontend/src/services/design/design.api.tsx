@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000/api/v1'
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:9999/api/v1'
 
 export interface Design {
   _id: string
@@ -21,6 +21,7 @@ export interface Design {
     name: string
     slug: string
   }
+  isHighlight: boolean
   createdAt: string
   updatedAt: string
 }
@@ -61,6 +62,7 @@ export interface CreateDesignData {
   designUnit: string
   detailedDescription?: string
   categories: string
+  isHighlight?: boolean
 }
 
 export interface UpdateDesignData extends Partial<CreateDesignData> {}
@@ -177,6 +179,27 @@ class DesignAPI {
 
     if (!response.ok) {
       throw new Error(`Failed to delete design: ${response.statusText}`)
+    }
+
+    return response.json()
+  }
+
+  // Get highlight designs
+  async getHighlightDesigns(params?: {
+    page?: number
+    limit?: number
+  }): Promise<DesignsResponse> {
+    const queryParams = new URLSearchParams()
+    if (params?.page) queryParams.append('page', params.page.toString())
+    if (params?.limit) queryParams.append('limit', params.limit.toString())
+
+    const response = await fetch(`${API_BASE_URL}/designs/highlight?${queryParams}`, {
+      headers: this.getAuthHeaders()
+    })
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}))
+      throw new Error(errorData?.message || `Failed to fetch highlight designs: ${response.statusText}`)
     }
 
     return response.json()

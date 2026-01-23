@@ -7,93 +7,54 @@ export interface Ward {
   ward: string;
 }
 
-// Lấy danh sách tỉnh/thành phố. Trả về Promise<Province[]>
+/**
+ * Lấy danh sách tỉnh/thành
+ */
 export const getProvinces = async (): Promise<Province[]> => {
-  try {
-    const response = await fetch("https://34tinhthanh.com/api/provinces");
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    return Array.isArray(data) ? data : [];
-  } catch (error) {
-    console.error("Error fetching provinces:", error);
-    throw error;
-  }
+  const res = await fetch("https://provinces.open-api.vn/api/p/");
+  if (!res.ok) throw new Error("Failed to fetch provinces");
+
+  const data = await res.json();
+
+  return data.map((p: { code: number; name: string }) => ({
+    province_code: p.code,
+    name: p.name,
+  }));
 };
 
-// Lấy danh sách xã/phường theo mã tỉnh. Trả về Promise<Ward[]>
+/**
+ * Lấy danh sách xã/phường theo mã tỉnh
+ * (flow: Province → District → Ward)
+ */
 export const getWardsByProvinceCode = async (
   provinceCode: number
 ): Promise<Ward[]> => {
-  if (!provinceCode || provinceCode <= 0) {
-    throw new Error("Invalid province code");
-  }
+  if (!provinceCode) return [];
 
-  try {
-    // Thử với các API endpoints khác nhau
-    const endpoints = [
-      `https://34tinhthanh.com/api/wards?province_code=${provinceCode}`,
-      `https://34tinhthanh.com/api/wards/${provinceCode}`,
-      `https://34tinhthanh.com/api/provinces/${provinceCode}/wards`,
-      `https://provinces-api-v1.onrender.com/api/provinces/${provinceCode}/districts`,
-      `https://vapi.vnapp.vn/api/province/${provinceCode}/district`,
-      `https://api.vietqr.io/v2/provinces/${provinceCode}/districts`,
-      `https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`,
-    ];
+  // 1️⃣ Lấy tỉnh + danh sách huyện
+  const provinceRes = await fetch(
+    `https://provinces.open-api.vn/api/p/${provinceCode}?depth=2`
+  );
+  if (!provinceRes.ok) throw new Error("Failed to fetch districts");
 
-    for (const endpoint of endpoints) {
-      try {
-        console.log(`Trying endpoint: ${endpoint}`);
-        const response = await fetch(endpoint, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-          },
-          // Thêm timeout để không chờ quá lâu
-          signal: AbortSignal.timeout(10000), // 10 seconds
-        });
-        
-        if (response.ok) {
-          const data = await response.json();
-          console.log(`Success with endpoint: ${endpoint}`, data);
-          
-          // Handle different response formats
-          if (Array.isArray(data)) {
-            return data.map((ward: { ward_name?: string; name?: string; district_name?: string; } | string) => ({
-              ward: typeof ward === 'string' ? ward : ward.ward_name || ward.name || ward.district_name || '',
-            }));
-          } else if (data.wards && Array.isArray(data.wards)) {
-            return data.wards.map((ward: { ward_name?: string; name?: string; district_name?: string; } | string) => ({
-              ward: typeof ward === 'string' ? ward : ward.ward_name || ward.name || ward.district_name || '',
-            }));
-          } else if (data.data && Array.isArray(data.data)) {
-            return data.data.map((ward: { ward_name?: string; name?: string; district_name?: string; } | string) => ({
-              ward: typeof ward === 'string' ? ward : ward.ward_name || ward.name || ward.district_name || '',
-            }));
-          } else if (data.districts && Array.isArray(data.districts)) {
-            return data.districts.map((ward: { ward_name?: string; name?: string; district_name?: string; } | string) => ({
-              ward: typeof ward === 'string' ? ward : ward.ward_name || ward.name || ward.district_name || '',
-            }));
-          } else if (data.results && Array.isArray(data.results)) {
-            return data.results.map((ward: { ward_name?: string; name?: string; district_name?: string; } | string) => ({
-              ward: typeof ward === 'string' ? ward : ward.ward_name || ward.name || ward.district_name || '',
-            }));
-          }
-        }
-      } catch (error) {
-        console.log(`Failed with endpoint ${endpoint}:`, error);
-        continue; // Thử endpoint tiếp theo
-      }
-    }
+  const provinceData = await provinceRes.json();
 
-    // Nếu tất cả endpoints đều fail, trả về mảng rỗng
-    console.warn(`All endpoints failed for province code ${provinceCode}. Returning empty array.`);
-    return [];
-    
-  } catch (error) {
-    console.error("Error fetching wards:", error);
-    return [];
-  }
+  if (!provinceData.districts?.length) return [];
+
+  // 2️⃣ Lấy xã theo từng huyện
+  const wardRequests = provinceData.districts.map(
+    (d: { code: number }) =>
+      fetch(`https://provinces.open-api.vn/api/d/${d.code}?depth=2`)
+        .then(res => res.json())
+        .then(district =>
+          (district.wards || []).map((w: { name: string }) => ({
+            ward: w.name,
+          }))
+        )
+  );
+
+  const wardArrays = await Promise.all(wardRequests);
+
+  // 3️⃣ Gộp lại thành 1 mảng
+  return wardArrays.flat();
 };

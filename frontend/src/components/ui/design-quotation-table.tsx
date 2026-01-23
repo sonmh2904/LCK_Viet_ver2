@@ -103,7 +103,7 @@ export const sampleDesignData: DesignItem[] = [
     id: 2,
     stt: "2",
     loaiCongTrinh: "Nhà phố một mặt tiền",
-    kienTruc: "120,000",
+    kienTruc: "100,000",
     noiThat: "180,000",
     kienTrucVaNoiThat: "250,000"
   },
@@ -111,7 +111,7 @@ export const sampleDesignData: DesignItem[] = [
     id: 3,
     stt: "3",
     loaiCongTrinh: "Nhà phố hai mặt tiền",
-    kienTruc: "120,000",
+    kienTruc: "100,000",
     noiThat: "180,000",
     kienTrucVaNoiThat: "270,000"
   },
@@ -119,7 +119,7 @@ export const sampleDesignData: DesignItem[] = [
     id: 4,
     stt: "4",
     loaiCongTrinh: "Biệt thự",
-    kienTruc: "150,000",
+    kienTruc: "120,000",
     noiThat: "200,000",
     kienTrucVaNoiThat: "320,000"
   },

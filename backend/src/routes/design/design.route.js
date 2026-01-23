@@ -6,7 +6,8 @@ const {
     getDesignById,
     updateDesign,
     deleteDesign,
-    getDesignsByCategory
+    getDesignsByCategory,
+    getHighlightDesigns
 } = require('../../controller/design/design.controller');
 
 // Middleware để validate request (optional)
@@ -56,6 +57,9 @@ router.get('/', getAllDesigns);
 
 // GET /api/v1/designs/category/:categoryId - Lấy designs theo category
 router.get('/category/:categoryId', getDesignsByCategory);
+
+// GET /api/v1/designs/highlight - Lấy các thiết kế nổi bật
+router.get('/highlight', getHighlightDesigns);
 
 // GET /api/v1/designs/:id - Lấy design theo ID
 router.get('/:id', getDesignById);

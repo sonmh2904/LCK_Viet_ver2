@@ -16,13 +16,40 @@ export default function AdminDesignDetailPage() {
   const [error, setError] = useState<string | null>(null)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [deleteLoading, setDeleteLoading] = useState(false)
+  const [relatedDesigns, setRelatedDesigns] = useState<Design[]>([])
+  const [loadingRelated, setLoadingRelated] = useState(true)
   const id = params.id as string
+
+  const fetchRelatedDesigns = async () => {
+    try {
+      setLoadingRelated(true)
+      if (design?.categories?._id) {
+        const response = await designAPI.getDesigns({
+          categories: design.categories._id,
+          limit: 6 // Lấy 6 để loại bỏ design hiện tại còn lại 5
+        })
+        // Lọc bỏ design hiện tại
+        const filteredDesigns = response.data.designs.filter(d => d._id !== design._id).slice(0, 5)
+        setRelatedDesigns(filteredDesigns)
+      }
+    } catch (err) {
+      console.error('Failed to load related designs:', err)
+    } finally {
+      setLoadingRelated(false)
+    }
+  }
 
   useEffect(() => {
     if (id && typeof id === 'string') {
       fetchDesign()
     }
   }, [id])
+
+  useEffect(() => {
+    if (design) {
+      fetchRelatedDesigns()
+    }
+  }, [design])
 
   const fetchDesign = async () => {
     try {
@@ -73,6 +100,15 @@ export default function AdminDesignDetailPage() {
     } finally {
       setDeleteLoading(false)
     }
+  }
+
+  const getAllImages = () => {
+    if (!design) return []
+    return [design.mainImage, ...(design.subImages || [])]
+  }
+
+  const handleImageChange = (index: number) => {
+    setCurrentImageIndex(index)
   }
 
   const nextImage = () => {
@@ -130,255 +166,183 @@ export default function AdminDesignDetailPage() {
     )
   }
 
+  const allImages = getAllImages()
+  const currentImage = allImages[currentImageIndex]
+
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="mx-auto max-w-7xl px-6">
-        {/* Header */}
-        <div className="mb-8">
-          <Link 
-            href="/admin/designs"
-            className="inline-flex items-center text-gray-600 hover:text-gray-900 mb-6"
-          >
-            <FaArrowLeft className="w-4 h-4 mr-2" />
-            Quay lại danh sách
-          </Link>
-
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="flex items-start justify-between">
-              <div className="flex-1">
-                <h1 className="text-2xl font-bold text-gray-900 mb-2">{design.projectName}</h1>
-                <div className="flex items-center gap-4 text-sm text-gray-600">
-                  <span className="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full bg-blue-100 text-blue-700 border border-blue-200">
-                    {design.projectType}
-                  </span>
-                  <span className="inline-flex items-center px-3 py-1.5 text-xs font-semibold rounded-full bg-green-100 text-green-700 border border-green-200">
-                    {design.categories?.name || 'Không có danh mục'}
-                  </span>
-                </div>
-              </div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Admin Header */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="mx-auto max-w-7xl px-6 py-4">
+          <div className="flex items-center justify-between">
+            <Link 
+              href="/admin/designs"
+              className="inline-flex items-center text-gray-600 hover:text-gray-900"
+            >
+              <FaArrowLeft className="w-4 h-4 mr-2" />
+              Quay lại danh sách
+            </Link>
+            
+            <div className="flex items-center gap-3">
+              <Link
+                href={`/admin/designs/edit/${design._id}`}
+                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors"
+              >
+                <FaEdit className="w-4 h-4 mr-2" />
+                Chỉnh sửa
+              </Link>
               
-              <div className="flex items-center gap-3 ml-6">
-                <Link
-                  href={`/admin/designs/edit/${design._id}`}
-                  className="inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700 transition-colors"
-                >
-                  <FaEdit className="w-4 h-4 mr-2" />
-                  Chỉnh sửa
-                </Link>
-                
-                <button
-                  onClick={handleDelete}
-                  disabled={deleteLoading}
-                  className="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <FaTrash className="w-4 h-4 mr-2" />
-                  {deleteLoading ? 'Đang xóa...' : 'Xóa'}
-                </button>
-              </div>
+              <button
+                onClick={handleDelete}
+                disabled={deleteLoading}
+                className="inline-flex items-center px-4 py-2 bg-red-600 text-white text-sm font-medium rounded hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <FaTrash className="w-4 h-4 mr-2" />
+                {deleteLoading ? 'Đang xóa...' : 'Xóa'}
+              </button>
             </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-8">
-            {/* Main Image */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Hình ảnh chính</h2>
-              <div className="relative h-96 rounded-lg overflow-hidden">
-                <Image
-                  src={design.mainImage}
-                  alt={design.projectName}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            </div>
-
-            {/* Sub Images */}
-            {design.subImages && design.subImages.length > 0 && (
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Hình ảnh phụ ({design.subImages.length})</h2>
-                <div className="space-y-4">
-                  {/* Main Image Display */}
-                  <div className="relative h-96 rounded-lg overflow-hidden">
-                    <Image
-                      src={currentImageIndex === 0 ? design.mainImage : design.subImages[currentImageIndex - 1]}
-                      alt={`${design.projectName} - ${currentImageIndex === 0 ? 'Main' : `Sub ${currentImageIndex}`}`}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-
-                  {/* Image Navigation */}
-                  {(design.subImages.length > 0 || currentImageIndex > 0) && (
-                    <div className="flex items-center justify-between">
-                      <button
-                        onClick={prevImage}
-                        disabled={currentImageIndex === 0}
-                        className="inline-flex items-center px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <FaArrowLeft className="w-4 h-4 mr-2" />
-                        Trước
-                      </button>
-                      
-                      <span className="text-sm text-gray-600">
-                        {currentImageIndex === 0 ? 'Hình chính' : `Hình phụ ${currentImageIndex}`}
-                      </span>
-                      
-                      <button
-                        onClick={nextImage}
-                        disabled={currentImageIndex === design.subImages.length}
-                        className="inline-flex items-center px-4 py-2 bg-gray-600 text-white text-sm font-medium rounded hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        Sau
-                        <FaArrowLeft className="w-4 h-4 ml-2 rotate-180" />
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Thumbnail Grid */}
-                  <div className="grid grid-cols-4 md:grid-cols-6 gap-2 mt-4">
-                    {/* Main Image Thumbnail */}
-                    <div
-                      onClick={() => setCurrentImageIndex(0)}
-                      className={`relative aspect-square rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${
-                        currentImageIndex === 0 ? 'border-blue-500' : 'border-gray-200 hover:border-gray-300'
-                      }`}
-                    >
-                      <Image
-                        src={design.mainImage}
-                        alt="Main image"
-                        fill
-                        className="object-cover"
-                      />
-                      <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
-                        Chính
-                      </div>
-                    </div>
-                    
-                    {/* Sub Images Thumbnails */}
-                    {design.subImages.map((subImage, index) => (
-                      <div
-                        key={index}
-                        onClick={() => setCurrentImageIndex(index + 1)}
-                        className={`relative aspect-square rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${
-                          currentImageIndex === index + 1 ? 'border-blue-500' : 'border-gray-200 hover:border-gray-300'
-                        }`}
-                      >
-                        <Image
-                          src={subImage}
-                          alt={`Sub image ${index + 1}`}
-                          fill
-                          className="object-cover"
-                        />
-                        <div className="absolute bottom-2 left-2 bg-black bg-opacity-50 text-white text-xs px-2 py-1 rounded">
-                          {index + 1}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Sidebar Info */}
-          <div className="space-y-8">
-            {/* Project Info */}
-            <div className="bg-white rounded-lg shadow-sm p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Thông tin dự án</h2>
-              <div className="space-y-4">
-                <div className="flex items-center">
-                  <FaUser className="w-5 h-5 text-gray-400 mr-3" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Chủ đầu tư</p>
-                    <p className="text-sm text-gray-600">{design.investor}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center">
-                  <FaFileAlt className="w-5 h-5 text-gray-400 mr-3" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Loại hình</p>
-                    <p className="text-sm text-gray-600">{design.projectType}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center">
-                  <FaCalendarAlt className="w-5 h-5 text-gray-400 mr-3" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Năm thực hiện</p>
-                    <p className="text-sm text-gray-600">{design.implementationYear}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center">
-                  <FaMapMarkerAlt className="w-5 h-5 text-gray-400 mr-3" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Địa chỉ</p>
-                    <p className="text-sm text-gray-600">{design.address}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center">
-                  <FaBuilding className="w-5 h-5 text-gray-400 mr-3" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Đơn vị thiết kế</p>
-                    <p className="text-sm text-gray-600">{design.designUnit}</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center">
-                  <FaHome className="w-5 h-5 text-gray-400 mr-3" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Chức năng</p>
-                    <p className="text-sm text-gray-600">{design.functionality}</p>
-                  </div>
-                </div>
-
-                {design.investmentLevel && (
-                  <div className="flex items-center">
-                    <FaFileAlt className="w-5 h-5 text-gray-400 mr-3" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-900">Mức đầu tư</p>
-                      <p className="text-sm text-gray-600">{design.investmentLevel}</p>
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex items-center">
-                  <FaRulerCombined className="w-5 h-5 text-gray-400 mr-3" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Diện tích</p>
-                    <p className="text-sm text-gray-600">
-                      {design.landArea}m² đất / {design.constructionArea}m² xây dựng
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center">
-                  <FaBuilding className="w-5 h-5 text-gray-400 mr-3" />
-                  <div>
-                    <p className="text-sm font-medium text-gray-900">Số tầng</p>
-                    <p className="text-sm text-gray-600">{design.floors} tầng</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Description */}
-            {design.detailedDescription && (
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Mô tả chi tiết</h2>
-                <div className="prose prose-sm text-gray-600">
-                  <p className="whitespace-pre-wrap">{design.detailedDescription}</p>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
+
+      {/* Project Name Header */}
+      <div className="py-4">
+        <div className="mx-auto max-w-7xl px-6">
+          <h1 className="text-3xl font-bold text-[#b30000]">{design.projectName}</h1>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <main className="py-8">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            {/* Main Content Area - 10 parts */}
+            <div className="lg:col-span-12 space-y-8">
+              
+              {/* Image Gallery */}
+              <div className="space-y-4">
+                {/* Main Image */}
+                <div className="relative aspect-video overflow-hidden rounded-lg shadow-lg">
+                  <Image
+                    src={currentImage}
+                    alt={design.projectName}
+                    fill
+                    className="object-cover"
+                  />
+                  
+                  {/* Image Navigation */}
+                  {allImages.length > 1 && (
+                    <>
+                      <button
+                        onClick={prevImage}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+                      >
+                        <FaArrowLeft className="rotate-180" />
+                      </button>
+                      <button
+                        onClick={nextImage}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 text-white p-2 rounded-full hover:bg-black/70 transition-colors"
+                      >
+                        <FaArrowLeft className="rotate-180" />
+                      </button>
+                    </>
+                  )}
+                </div>
+
+                {/* Thumbnail Gallery */}
+                {allImages.length > 1 && (
+                  <div className="grid grid-cols-5 gap-2">
+                    {allImages.map((image, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleImageChange(index)}
+                        className={`relative aspect-video overflow-hidden rounded border-2 transition-all ${
+                          currentImageIndex === index
+                            ? "border-[#b30000] scale-105"
+                            : "border-gray-200 hover:border-gray-400"
+                        }`}
+                      >
+                        <Image
+                          src={image}
+                          alt={`${design.projectName} ${index + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* THÔNG TIN CÔNG TRÌNH */}
+              <div className="bg-white border border-gray-200 rounded-lg p-6">
+                <h2 className="text-xl font-bold text-gray-900 mb-6">THÔNG TIN CÔNG TRÌNH</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <FaUser className="w-5 h-5 text-[#b30000]" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">Chủ đầu tư</p>
+                        <p className="text-sm text-gray-700">{design.investor}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <FaFileAlt className="w-5 h-5 text-[#b30000]" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">Loại hình</p>
+                        <p className="text-sm text-gray-700">{design.projectType}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <FaCalendarAlt className="w-5 h-5 text-[#b30000]" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">Năm thực hiện</p>
+                        <p className="text-sm text-gray-700">{design.implementationYear}</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <FaMapMarkerAlt className="w-5 h-5 text-[#b30000]" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">Địa chỉ</p>
+                        <p className="text-sm text-gray-700">{design.address}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <FaRulerCombined className="w-5 h-5 text-[#b30000]" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">Diện tích</p>
+                        <p className="text-sm text-gray-700">{design.landArea}m² đất / {design.constructionArea}m² xây dựng</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <FaBuilding className="w-5 h-5 text-[#b30000]" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">Số tầng</p>
+                        <p className="text-sm text-gray-700">{design.floors} tầng</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mô tả chi tiết */}
+              {design.detailedDescription && (
+                <div className="bg-white border border-gray-200 rounded-lg p-6">
+                  <h2 className="text-xl font-bold text-gray-900 mb-4">MÔ TẢ CHI TIẾT</h2>
+                  <div className="prose prose-gray max-w-none">
+                    <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                      {design.detailedDescription}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
   )
 }

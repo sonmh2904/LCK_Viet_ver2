@@ -7,15 +7,15 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 const slides = [
   {
     id: 1,
-    image: "/banner/banner-5.jpg",
+    image: "/banner/banner-8.jpg",
   },
   {
     id: 2,
-    image: "/banner/banner-4.jpg",
+    image: "/banner/banner-7.jpg",
   },
   {
     id: 3,
-    image: "/banner/banner-2.png",
+    image: "/banner/banner-9.jpg",
   },
 ]
 
@@ -53,7 +53,7 @@ export function HeroSection() {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative h-[700px] w-full">
+      <div className="relative h-[480px] w-full">
         {slides.map((slide, index) => (
           <div
             key={slide.id}

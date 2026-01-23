@@ -138,69 +138,19 @@ export default function ThietKePage() {
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-[#b30000] to-[#8a0000] text-white py-16">
-        <div className="mx-auto max-w-7xl px-6 text-center">
-          <h1 className="text-4xl font-bold mb-4">Thiết Kế</h1>
-          <p className="text-xl opacity-90">Khám phá các mẫu thiết kế nội thất và ngoại thất đẹp và hiện đại</p>
-        </div>
-      </div>
 
       {/* Main Content */}
       <main className="py-8">
         <div className="mx-auto max-w-7xl px-6">
-          {/* Search Bar */}
-          <form onSubmit={handleSearch} className="mb-8">
-            <div className="flex gap-4 max-w-2xl mx-auto">
-              <input
-                type="text"
-                placeholder="Tìm kiếm theo tên dự án, chủ đầu tư, địa chỉ..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#b30000]"
-              />
-              <button
-                type="submit"
-                className="px-6 py-3 bg-[#b30000] text-white rounded-lg hover:bg-[#8a0000] transition-colors"
-              >
-                Tìm kiếm
-              </button>
-            </div>
-          </form>
 
-          {/* Category Filter */}
-          <div className="flex flex-wrap justify-center gap-2 mb-8">
-            <button
-              onClick={() => handleCategoryChange("")}
-              className={`px-4 py-2 rounded-full font-medium transition-all text-sm ${
-                selectedCategory === ""
-                  ? "bg-[#b30000] text-white"
-                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-              }`}
-            >
-              Tất cả
-            </button>
-            {loadingCategories ? (
-              <div className="flex items-center justify-center">
-                <FaSpinner className="w-4 h-4 animate-spin text-gray-500 mr-2" />
-                <span className="text-sm text-gray-500">Đang tải danh mục...</span>
-              </div>
-            ) : (
-              categories.map((category) => (
-                <button
-                  key={category._id}
-                  onClick={() => handleCategoryChange(category._id)}
-                  className={`px-4 py-2 rounded-full font-medium transition-all text-sm ${
-                    selectedCategory === category._id
-                      ? "bg-[#b30000] text-white"
-                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-                  }`}
-                >
-                  {category.name}
-                </button>
-              ))
-            )}
-          </div>
+          {/* Category Title */}
+          {selectedCategory && (
+            <div className="text-center mb-6">
+              <h2 className="text-2xl font-bold text-[#b30000]">
+                {categories.find(c => c._id === selectedCategory)?.name || 'Tất cả'}
+              </h2>
+            </div>
+          )}
 
           {/* Projects Grid */}
           {designs.length === 0 ? (

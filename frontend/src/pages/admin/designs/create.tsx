@@ -26,7 +26,8 @@ export default function CreateDesign() {
     functionality: "",
     designUnit: "",
     detailedDescription: "",
-    categories: ""
+    categories: "",
+    isHighlight: false
   });
 
   useEffect(() => {
@@ -69,7 +70,8 @@ export default function CreateDesign() {
     
     setFormData(prev => ({
       ...prev,
-      [name]: type === 'number' ? (value === '' ? 0 : Number(value)) : value
+      [name]: type === 'number' ? (value === '' ? 0 : Number(value)) : 
+             type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
     }));
   };
 
@@ -250,6 +252,20 @@ export default function CreateDesign() {
                     </option>
                   ))}
                 </select>
+              </div>
+
+              <div>
+                <label className="flex items-center space-x-2 text-sm font-medium text-gray-700">
+                  <input
+                    type="checkbox"
+                    name="isHighlight"
+                    checked={formData.isHighlight || false}
+                    onChange={handleInputChange}
+                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <span>Thiết kế nổi bật</span>
+                </label>
+                <p className="text-xs text-gray-500 mt-1">Đánh dấu là thiết kế nổi bật để hiển thị ưu tiên</p>
               </div>
             </div>
 

@@ -5,7 +5,7 @@ export default function AdminIndex() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace("/admin/blogs");
+    router.replace("/admin/information");
   }, [router]);
 
   return null;

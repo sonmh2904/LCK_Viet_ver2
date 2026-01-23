@@ -16,10 +16,10 @@ export function ToastNotification({ message, type, isVisible, onClose }: ToastPr
   useEffect(() => {
     if (isVisible) {
       setShouldRender(true)
-      // Auto dismiss after 5 seconds
+      // Auto dismiss after 3 seconds
       const timer = setTimeout(() => {
         onClose()
-      }, 5000)
+      }, 3000)
       return () => clearTimeout(timer)
     } else {
       // Allow exit animation to complete
@@ -33,7 +33,7 @@ export function ToastNotification({ message, type, isVisible, onClose }: ToastPr
   if (!shouldRender) return null
 
   return (
-    <div className="fixed top-4 right-4 z-50 flex items-center justify-center">
+    <div className="fixed top-4 right-4 z-50 flex items-center justify-end">
       <div
         className={`
           flex items-center gap-3 px-6 py-4 rounded-2xl border shadow-lg backdrop-blur-xl

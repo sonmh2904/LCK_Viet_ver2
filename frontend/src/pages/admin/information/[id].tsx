@@ -226,13 +226,6 @@ export default function InformationDetail() {
               </div>
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Quận/Huyện</label>
-              <div className="flex items-center text-gray-900">
-                <MapPin className="w-4 h-4 mr-2 text-gray-400" />
-                {information.district || "—"}
-              </div>
-            </div>
           </div>
         </div>
 

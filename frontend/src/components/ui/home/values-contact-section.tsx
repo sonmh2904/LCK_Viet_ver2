@@ -2,7 +2,7 @@
 
 import { CheckCircle2, ShieldCheck, Users } from "lucide-react"
 import { useState, useEffect } from "react"
-import { getProvinces, getWardsByProvinceCode, Province, Ward } from "@/services/address/address.api"
+import { getProvinces, Province } from "@/services/address/address.api"
 import { addInformation, CreateInformationRequest } from "@/services/information/information.api"
 import { ToastNotification } from "@/components/ui/toast/toast-notification"
 
@@ -26,14 +26,13 @@ const values = [
 
 export function ValuesContactSection() {
   const [provinces, setProvinces] = useState<Province[]>([])
-  const [wards, setWards] = useState<Ward[]>([])
   const [selectedProvince, setSelectedProvince] = useState<number>(0)
-  const [selectedWard, setSelectedWard] = useState<string>("")
   
   // Form state
   const [formData, setFormData] = useState({
     fullName: "",
     phoneNumber: "",
+    province: "",
     description: ""
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -57,31 +56,15 @@ export function ValuesContactSection() {
     fetchProvinces()
   }, [])
 
-  useEffect(() => {
-    const fetchWards = async () => {
-      if (selectedProvince > 0) {
-        try {
-          const data = await getWardsByProvinceCode(selectedProvince)
-          setWards(data)
-        } catch (error) {
-          console.error("Error loading wards:", error)
-        }
-      } else {
-        setWards([])
-        setSelectedWard("")
-      }
-    }
-    fetchWards()
-  }, [selectedProvince])
-
   const handleProvinceChange = (provinceCode: string) => {
     const code = parseInt(provinceCode)
     setSelectedProvince(code)
-    setSelectedWard("")
-  }
-
-  const handleWardChange = (wardName: string) => {
-    setSelectedWard(wardName)
+    // Update form data with province name
+    const province = provinces.find(p => p.province_code === code)
+    setFormData(prev => ({
+      ...prev,
+      province: province?.name || ""
+    }))
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -121,7 +104,6 @@ export function ValuesContactSection() {
         fullName: formData.fullName,
         phoneNumber: formData.phoneNumber,
         province: selectedProvince > 0 && selectedProvinceData ? selectedProvinceData.name : undefined,
-        district: selectedWard || undefined,
         description: formData.description || undefined
       }
       
@@ -136,10 +118,8 @@ export function ValuesContactSection() {
       if (responseData.code === 201) {
         showToast("Gửi yêu cầu tư vấn thành công! Chúng tôi sẽ liên hệ với bạn trong 24h.", "success")
         // Reset form
-        setFormData({ fullName: "", phoneNumber: "", description: "" })
+        setFormData({ fullName: "", phoneNumber: "", province: "", description: "" })
         setSelectedProvince(0)
-        setSelectedWard("")
-        setWards([])
       } else {
         showToast(responseData.message || "Có lỗi xảy ra. Vui lòng thử lại.", "error")
       }
@@ -166,11 +146,7 @@ export function ValuesContactSection() {
   }
 
   const showToast = (message: string, type: "success" | "error") => {
-    setToast({
-      isVisible: true,
-      message,
-      type
-    })
+    setToast({ isVisible: true, message, type })
   }
 
   const hideToast = () => {
@@ -258,27 +234,6 @@ export function ValuesContactSection() {
                       {provinces.map((province) => (
                         <option key={province.province_code} value={province.province_code} className="bg-[#d6301f] text-white">
                           {province.name}
-                        </option>
-                      ))}
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-white/70">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </div>
-                  </div>
-
-                  <div className="relative">
-                    <select
-                      value={selectedWard}
-                      onChange={(e) => handleWardChange(e.target.value)}
-                      disabled={selectedProvince === 0 || isSubmitting}
-                      className="w-full rounded-2xl border border-white/30 bg-white/15 backdrop-blur-sm px-4 py-3 text-white outline-none transition focus:border-white focus:ring-2 focus:ring-white/30 appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <option value="" className="bg-[#d6301f] text-white">Chọn quận/huyện</option>
-                      {wards.map((ward, index) => (
-                        <option key={index} value={ward.ward} className="bg-[#d6301f] text-white">
-                          {ward.ward}
                         </option>
                       ))}
                     </select>

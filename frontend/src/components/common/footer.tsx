@@ -1,23 +1,23 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { getProvinces, getWardsByProvinceCode, Province, Ward } from "@/services/address/address.api"
+import { getProvinces, Province } from "@/services/address/address.api"
+import { addInformation, CreateInformationRequest } from "@/services/information/information.api"
+import { ToastNotification } from "@/components/ui/toast/toast-notification"
 
 const FACEBOOK_PAGE = "https://www.facebook.com/profile.php?id=100081223427193#"
 
 export function Footer() {
   const [provinces, setProvinces] = useState<Province[]>([])
-  const [wards, setWards] = useState<Ward[]>([])
   const [selectedProvince, setSelectedProvince] = useState<number>(0)
-  const [selectedWard, setSelectedWard] = useState<string>("")
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
-    email: "",
-    ward: "",
     province: "",
     message: "",
   })
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [toast, setToast] = useState({ isVisible: false, message: "", type: "success" as "success" | "error" })
 
   useEffect(() => {
     const fetchProvinces = async () => {
@@ -31,39 +31,12 @@ export function Footer() {
     fetchProvinces()
   }, [])
 
-  useEffect(() => {
-    const fetchWards = async () => {
-      if (selectedProvince > 0) {
-        try {
-          const data = await getWardsByProvinceCode(selectedProvince)
-          setWards(data)
-        } catch (error) {
-          console.error("Error loading wards:", error)
-        }
-      } else {
-        setWards([])
-        setSelectedWard("")
-      }
-    }
-    fetchWards()
-  }, [selectedProvince])
-
   const handleProvinceChange = (provinceCode: string) => {
     const code = parseInt(provinceCode)
     setSelectedProvince(code)
-    setSelectedWard("")
     setFormData(prev => ({
       ...prev,
-      province: provinces.find(p => p.province_code === code)?.name || "",
-      ward: ""
-    }))
-  }
-
-  const handleWardChange = (wardName: string) => {
-    setSelectedWard(wardName)
-    setFormData(prev => ({
-      ...prev,
-      ward: wardName
+      province: provinces.find(p => p.province_code === code)?.name || ""
     }))
   }
 
@@ -72,6 +45,66 @@ export function Footer() {
       ...prev,
       [name]: value
     }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setIsSubmitting(true)
+    
+    try {
+      const selectedProvinceData = provinces.find(p => p.province_code === selectedProvince)
+      
+      const requestData: CreateInformationRequest = {
+        fullName: formData.name,
+        phoneNumber: formData.phone,
+        province: selectedProvince > 0 && selectedProvinceData ? selectedProvinceData.name : undefined,
+        description: formData.message || undefined
+      }
+      
+      console.log("Sending data:", requestData)
+      
+      const response = await addInformation(requestData)
+      
+      // Parse the JSON response
+      const responseData = await response.json()
+      console.log("API Response:", responseData)
+      
+      if (responseData.code === 201) {
+        setToast({ isVisible: true, message: "Gửi yêu cầu tư vấn thành công! Chúng tôi sẽ liên hệ với bạn trong 24h.", type: "success" })
+        // Reset form
+        setFormData({ name: "", phone: "", province: "", message: "" })
+        setSelectedProvince(0)
+      } else {
+        setToast({ isVisible: true, message: responseData.message || "Có lỗi xảy ra. Vui lòng thử lại.", type: "error" })
+      }
+    } catch (error: unknown) {
+      console.error("Error submitting form:", error)
+      
+      // Try to parse error response
+      let errorMessage = "Có lỗi xảy ra. Vui lòng thử lại."
+      if (error && typeof error === 'object' && 'response' in error) {
+        try {
+          const errorData = await (error as { response: { json(): Promise<{ message?: string }> } }).response.json()
+          errorMessage = errorData.message || errorMessage
+        } catch (parseError) {
+          console.error("Error parsing error response:", parseError)
+        }
+      } else if (error && typeof error === 'object' && 'message' in error) {
+        errorMessage = (error as { message?: string }).message || errorMessage
+      }
+      
+      setToast({ isVisible: true, message: errorMessage, type: "error" })
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({ isVisible: true, message, type })
+  }
+
+  const hideToast = () => {
+    setToast(prev => ({ ...prev, isVisible: false }))
   }
   return (
     <footer className="relative z-10 bg-gradient-to-r from-blue-500 via-red-400 to-red-800 text-white">
@@ -112,7 +145,7 @@ export function Footer() {
               Đăng ký nhận thông tin
             </p>
             <h3 className="text-xl font-bold uppercase tracking-wide text-[#b30000]">Nhận tư vấn & báo giá</h3>
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit}>
               <input
                 type="text"
                 name="name"
@@ -127,14 +160,6 @@ export function Footer() {
                 placeholder="Số điện thoại"
                 value={formData.phone}
                 onChange={(e) => handleInputChange("phone", e.target.value)}
-                className="w-full rounded-xl border border-[#f4b7aa] bg-white px-4 py-3 text-sm text-slate-700 placeholder:text-slate-400 outline-none transition focus:border-[#b30000] focus:ring-2 focus:ring-[#b30000]/30"
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={formData.email}
-                onChange={(e) => handleInputChange("email", e.target.value)}
                 className="w-full rounded-xl border border-[#f4b7aa] bg-white px-4 py-3 text-sm text-slate-700 placeholder:text-slate-400 outline-none transition focus:border-[#b30000] focus:ring-2 focus:ring-[#b30000]/30"
               />
               
@@ -158,27 +183,6 @@ export function Footer() {
                     </svg>
                   </div>
                 </div>
-
-                <div className="relative">
-                  <select
-                    value={selectedWard}
-                    onChange={(e) => handleWardChange(e.target.value)}
-                    disabled={selectedProvince === 0}
-                    className="w-full rounded-xl border border-[#f4b7aa] bg-white px-4 py-3 text-sm text-slate-700 placeholder:text-slate-400 outline-none transition focus:border-[#b30000] focus:ring-2 focus:ring-[#b30000]/30 appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <option value="">Chọn quận/huyện</option>
-                    {wards.map((ward, index) => (
-                      <option key={index} value={ward.ward}>
-                        {ward.ward}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4 text-slate-400">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </div>
-                </div>
               </div>
               
               <textarea
@@ -190,10 +194,11 @@ export function Footer() {
                 className="w-full rounded-xl border border-[#f4b7aa] bg-white px-4 py-3 text-sm text-slate-700 placeholder:text-slate-400 outline-none transition focus:border-[#b30000] focus:ring-2 focus:ring-[#b30000]/30"
               />
               <button
-                type="button"
-                className="w-full rounded-xl bg-gradient-to-r from-[#b30000] to-[#f05123] py-3 text-sm font-semibold uppercase tracking-[0.3em] text-white shadow-[0_12px_22px_-14px_rgba(179,0,0,0.75)] transition hover:brightness-110"
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full rounded-xl bg-gradient-to-r from-[#b30000] to-[#f05123] py-3 text-sm font-semibold uppercase tracking-[0.3em] text-white shadow-[0_12px_22px_-14px_rgba(179,0,0,0.75)] transition hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Gửi yêu cầu
+                {isSubmitting ? "Đang gửi..." : "Gửi yêu cầu"}
               </button>
             </form>
           </div>
@@ -232,6 +237,13 @@ export function Footer() {
           </div>
         </div>
       </div>
+      
+      <ToastNotification
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={hideToast}
+      />
     </footer>
   )
 }

@@ -35,6 +35,7 @@ const CategoriesManagement: React.FC = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
   const [formData, setFormData] = useState<CreateCategoryRequest>({ name: '' });
+  const [deleteModal, setDeleteModal] = useState<{ open: boolean; category: Category | null }>({ open: false, category: null });
 
   // Fetch categories
   const fetchCategories = async () => {
@@ -132,17 +133,20 @@ const CategoriesManagement: React.FC = () => {
   };
 
   // Delete category
-  const handleDeleteCategory = async (category: Category) => {
-    if (!window.confirm(`Bạn có chắc muốn xóa danh mục "${category.name}"?`)) {
-      return;
-    }
+  const handleDeleteCategory = (category: Category) => {
+    setDeleteModal({ open: true, category });
+  };
 
+  const confirmDelete = async () => {
+    if (!deleteModal.category) return;
+    
     try {
-      const response = await deleteCategory(category._id);
+      const response = await deleteCategory(deleteModal.category!._id);
       
       if (response.code === 200) {
         toast.success('Xóa danh mục thành công');
         fetchCategories();
+        setDeleteModal({ open: false, category: null });
       } else {
         toast.error(response.message || 'Lỗi khi xóa danh mục');
       }
@@ -150,6 +154,10 @@ const CategoriesManagement: React.FC = () => {
       console.error('Error deleting category:', error);
       toast.error('Lỗi khi xóa danh mục');
     }
+  };
+
+  const cancelDelete = () => {
+    setDeleteModal({ open: false, category: null });
   };
 
   // Toggle category status
@@ -535,6 +543,45 @@ const CategoriesManagement: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteModal.open && (
+        <div className="fixed inset-0 bg-gray-100 bg-opacity-5 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="flex items-center mb-4">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mr-4">
+                <Trash2 className="w-6 h-6 text-red-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900">Xóa danh mục</h3>
+                <p className="text-sm text-gray-600">Bạn có chắc muốn xóa danh mục này?</p>
+              </div>
+            </div>
+            
+            {deleteModal.category && (
+              <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                <p className="font-medium text-gray-900">{deleteModal.category.name}</p>
+                <p className="text-sm text-gray-600">{deleteModal.category.slug}</p>
+              </div>
+            )}
+            
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={cancelDelete}
+                className="px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              >
+                Hủy
+              </button>
+              <button
+                onClick={confirmDelete}
+                className="px-4 py-2 bg-red-600 text-white hover:bg-red-700 rounded-lg transition-colors"
+              >
+                Xóa
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 };

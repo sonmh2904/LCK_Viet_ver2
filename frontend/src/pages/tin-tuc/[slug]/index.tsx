@@ -220,12 +220,7 @@ export default function BlogDetailPage() {
                         <Clock size={16} className="mr-1" />
                         <span>{formatDate(blog.createdAt)}</span>
                       </div>
-                      {blog.views !== undefined && (
-                        <div className="flex items-center">
-                          <Eye size={16} className="mr-1" />
-                          <span>{blog.views} lượt xem</span>
-                        </div>
-                      )}
+
                       <div className="flex items-center">
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                           blog.status === 'active' 
@@ -294,12 +289,6 @@ export default function BlogDetailPage() {
                                 <Clock size={12} className="mr-1" />
                                 <span>{formatDate(featuredBlog.createdAt)}</span>
                               </div>
-                              {featuredBlog.views !== undefined && (
-                                <div className="flex items-center text-xs text-gray-500 mt-1">
-                                  <Eye size={12} className="mr-1" />
-                                  <span>{featuredBlog.views} lượt xem</span>
-                                </div>
-                              )}
                             </div>
                           </div>
                         </Link>

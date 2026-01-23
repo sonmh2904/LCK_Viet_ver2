@@ -69,12 +69,6 @@ export function AdminLayout({ children, title, description }: AdminLayoutProps) 
       description: "Tất cả bài viết"
     },
     {
-      href: "/admin/blogs/create",
-      icon: Plus,
-      label: "Viết bài mới",
-      description: "Tạo bài viết"
-    },
-    {
       href: "/admin/designs",
       icon: Palette,
       label: "Quản lý thiết kế",

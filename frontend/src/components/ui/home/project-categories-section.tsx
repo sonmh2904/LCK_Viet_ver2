@@ -45,8 +45,8 @@ export function ProjectCategoriesSection() {
 
   const visibleDesigns = highlightDesigns.slice(currentIndex, currentIndex + 3)
   return (
-    <section id="du-an" className="relative overflow-hidden bg-white py-24">
-      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-12 px-6">
+    <section id="du-an" className="relative overflow-hidden bg-white py-16 sm:py-20 md:py-24">
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 sm:px-6">
         <div className="text-center">
           <h2 className="text-4xl font-bold uppercase tracking-wider text-[#b30000] sm:text-5xl font-sans italic drop-shadow text-center">
             Bộ sưu tập công trình nổi bật
@@ -57,11 +57,11 @@ export function ProjectCategoriesSection() {
         </div>
 
         {loading ? (
-          <div className="grid gap-6 lg:grid-cols-3">
+          <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             {[...Array(3)].map((_, index) => (
               <div key={index} className="animate-pulse">
-                <div className="h-56 bg-gray-200 rounded-t-3xl" />
-                <div className="p-6 space-y-4">
+                <div className="h-48 sm:h-56 bg-gray-200 rounded-2xl sm:rounded-t-3xl" />
+                <div className="p-4 sm:p-6 space-y-4">
                   <div className="h-4 bg-gray-200 rounded w-3/4" />
                   <div className="h-3 bg-gray-200 rounded w-full" />
                   <div className="h-3 bg-gray-200 rounded w-2/3" />
@@ -71,26 +71,26 @@ export function ProjectCategoriesSection() {
           </div>
         ) : highlightDesigns.length > 0 ? (
           <div className="relative">
-            <div className="grid gap-6 lg:grid-cols-3">
+            <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
               {visibleDesigns.map((design) => (
                 <Link
                   key={design._id}
                   href={`/thiet-ke/${design._id}`}
-                  className="group relative overflow-hidden rounded-3xl bg-white shadow-lg transition-all hover:-translate-y-2 hover:shadow-2xl block"
+                  className="group relative overflow-hidden rounded-2xl sm:rounded-3xl bg-white shadow-lg transition-all hover:-translate-y-2 hover:shadow-2xl block"
                 >
-                  <div className="relative h-56 overflow-hidden">
+                  <div className="relative h-48 sm:h-56 overflow-hidden">
                     <img
                       src={design.mainImage}
                       alt={design.projectName}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#8a0303]/70 via-transparent to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
-                      <h3 className="text-2xl font-semibold">{design.projectName}</h3>
+                    <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-white">
+                      <h3 className="text-xl sm:text-2xl font-semibold">{design.projectName}</h3>
                       <p className="text-sm opacity-90">{design.projectType}</p>
                     </div>
                   </div>
-                  <div className="space-y-4 p-6 text-slate-600">
+                  <div className="space-y-4 p-4 sm:p-6 text-slate-600">
                     <p className="line-clamp-2">{design.detailedDescription || design.functionality}</p>
                     <div className="flex items-center justify-between">
                       <div className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.25em] text-[#b30000]">

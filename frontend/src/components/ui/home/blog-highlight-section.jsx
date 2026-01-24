@@ -96,14 +96,14 @@ export default function BlogHighlightSection() {
   const trending = rest.slice(0, 3);
 
   return (
-    <section className="relative overflow-hidden bg-white py-24 px-4">
-      <div className="container relative z-10 mx-auto">
+    <section className="relative overflow-hidden bg-white py-16 sm:py-20 md:py-24">
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-          className="mb-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
+          className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
         >
           <div className="flex items-center gap-3">
             <div>
@@ -123,12 +123,12 @@ export default function BlogHighlightSection() {
           </motion.a>
         </motion.div>
 
-        <div className="grid items-stretch gap-10 lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)]">
+        <div className="grid items-stretch gap-8 lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)]">
           {/* Featured Post */}
           <motion.article
             whileHover={{ translateY: -6 }}
             transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-            className="group relative flex h-full min-h-[360px] overflow-hidden rounded-3xl bg-gradient-to-br from-black/80 via-black/60 to-black/40 shadow-[0_40px_90px_-50px_rgba(249,115,22,0.35)] cursor-pointer"
+            className="group relative flex h-full min-h-[280px] sm:min-h-[320px] md:min-h-[360px] overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-black/80 via-black/60 to-black/40 shadow-[0_40px_90px_-50px_rgba(249,115,22,0.35)] cursor-pointer"
             onClick={() => {
               if (featured?.slug) {
                 window.location.href = `/tin-tuc/${featured.slug}`;
@@ -145,7 +145,7 @@ export default function BlogHighlightSection() {
                 className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-105"
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
-              <div className="absolute inset-0 flex flex-col justify-end gap-4 p-10 text-white">
+              <div className="absolute inset-0 flex flex-col justify-end gap-3 sm:gap-4 p-6 sm:p-8 md:p-10 text-white">
                 <div className="flex flex-wrap items-center gap-3 text-[0.6rem] font-semibold uppercase tracking-[0.35em] text-white/70">
                   <span className="inline-flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full bg-yellow-300" />
@@ -172,7 +172,7 @@ export default function BlogHighlightSection() {
                     Nổi bật
                   </motion.span>
                 </div>
-                <h3 className="text-2xl font-semibold sm:text-3xl md:text-4xl drop-shadow-[0_6px_25px_rgba(0,0,0,0.65)]">
+                <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-semibold drop-shadow-[0_6px_25px_rgba(0,0,0,0.65)]">
                   {featured?.title || "Bài viết nổi bật"}
                 </h3>
                 {featured?.excerpt && (
@@ -185,20 +185,20 @@ export default function BlogHighlightSection() {
           </motion.article>
 
           {/* Trending Posts */}
-          <aside className="flex flex-col gap-6 rounded-3xl border border-amber-100 bg-white/80 p-6 shadow-2xl backdrop-blur">
+          <aside className="flex flex-col gap-4 sm:gap-6 rounded-2xl sm:rounded-3xl border border-amber-100 bg-white/80 p-4 sm:p-6 shadow-2xl backdrop-blur">
             <div className="space-y-4">
               {trending.map((item, index) => (
                 <motion.div
                   key={item._id || index}
                   whileHover={{ translateY: -4, scale: 1.02 }}
-                  className="group flex gap-4 rounded-2xl border border-amber-100 bg-white/70 p-4 transition hover:border-amber-400/60 hover:bg-white cursor-pointer"
+                  className="group flex gap-3 sm:gap-4 rounded-xl sm:rounded-2xl border border-amber-100 bg-white/70 p-3 sm:p-4 transition hover:border-amber-400/60 hover:bg-white cursor-pointer"
                   onClick={() => {
                     if (item.slug) {
                       window.location.href = `/tin-tuc/${item.slug}`;
                     }
                   }}
                 >
-                  <div className="relative h-18 w-18 flex-shrink-0 overflow-hidden rounded-xl shadow-inner">
+                  <div className="relative h-14 w-14 sm:h-16 sm:w-16 md:h-18 md:w-18 flex-shrink-0 overflow-hidden rounded-lg sm:rounded-xl shadow-inner">
                     <img
                       src={
                         item.image ||

@@ -25,8 +25,8 @@ export function FooterCTASection() {
   )
 
   return (
-    <section className="bg-white py-16 text-gray-900">
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+    <section className="bg-white py-12 sm:py-16 text-gray-900">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col items-center">
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-[#f05123] animate-pulse" />
@@ -34,21 +34,21 @@ export function FooterCTASection() {
               Đối tác
             </span>
           </div>
-          <h2 className="mt-3 text-3xl md:text-4xl font-bold tracking-normal bg-gradient-to-r from-[#b30000] to-[#8a0000] bg-clip-text text-transparent leading-snug">
+          <h2 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-bold tracking-normal bg-gradient-to-r from-[#b30000] to-[#8a0000] bg-clip-text text-transparent leading-snug text-center">
             LCK Việt hân hạnh đồng hành cùng các thương hiệu uy tín
           </h2>
         </div>
 
         <div
-          className="relative mt-10 overflow-hidden rounded-2xl border border-neutral-200 bg-white/95 shadow-lg shadow-red-900/10 backdrop-blur"
+          className="relative mt-8 sm:mt-10 overflow-hidden rounded-xl sm:rounded-2xl border border-neutral-200 bg-white/95 shadow-lg shadow-red-900/10 backdrop-blur"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-white to-transparent" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-white to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-24 bg-gradient-to-r from-white to-transparent" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-24 bg-gradient-to-l from-white to-transparent" />
 
           <div
-            className="flex w-max items-center gap-16 px-16 py-10"
+            className="flex w-max items-center gap-8 sm:gap-12 lg:gap-16 px-8 sm:px-12 lg:px-16 py-8 sm:py-10"
             style={{
               animation: `footer-marquee ${BRAND_LOGOS.length * ANIMATION_DURATION_PER_LOGO}s linear infinite`,
               animationPlayState: isPaused ? "paused" : "running",
@@ -57,7 +57,7 @@ export function FooterCTASection() {
             {doubledLogos.map((brand, index) => (
               <div
                 key={`${brand.alt}-${index}`}
-                className="relative flex h-16 w-32 items-center justify-center opacity-80 transition duration-300 hover:opacity-100 sm:h-20 sm:w-40"
+                className="relative flex h-12 w-24 sm:h-16 sm:w-32 lg:h-20 lg:w-40 items-center justify-center opacity-80 transition duration-300 hover:opacity-100"
               >
                 <Image
                   src={brand.src}

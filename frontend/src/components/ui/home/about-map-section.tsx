@@ -64,10 +64,10 @@ export function AboutMapSection() {
   }, [isVisible])
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden bg-white py-24">
+    <section ref={sectionRef} className="relative overflow-hidden bg-white py-16 sm:py-20 md:py-24">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#f2f2f2] via-transparent to-transparent" />
 
-      <div className="relative mx-auto w-full max-w-6xl px-6">
+      <div className="relative mx-auto w-full max-w-6xl px-4 sm:px-6">
         <div className="flex flex-col items-center">
           <div className="flex items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-[#f05123] animate-pulse" />
@@ -80,8 +80,8 @@ export function AboutMapSection() {
           </h2>
         </div>
 
-        <div className="mt-12 grid gap-12 lg:grid-cols-[1.3fr_1fr_1fr]">
-          <div className="space-y-5 text-[15px] leading-relaxed text-slate-600">
+        <div className="mt-8 sm:mt-12 grid gap-8 lg:grid-cols-[1.3fr_1fr_1fr]">
+          <div className="space-y-4 sm:space-y-5 text-sm sm:text-[15px] leading-relaxed text-slate-600">
             <p>
               <span className="font-semibold text-[#b30000]">LCK Việt</span> là đơn vị chuyên sâu trong lĩnh vực
               <span className="font-semibold"> thiết kế và thi công kiến trúc nội thất</span>, cung cấp các giải pháp trọn gói cho nhà ở, biệt thự,
@@ -96,7 +96,7 @@ export function AboutMapSection() {
             </p>
           </div>
 
-          <div className="relative mx-auto flex w-full max-w-[320px] items-center justify-center">
+          <div className="relative mx-auto flex w-full max-w-[280px] sm:max-w-[320px] items-center justify-center">
             <div className="relative aspect-[3/5] w-full">
               <Image
                 src="/vietnam.png"
@@ -109,19 +109,19 @@ export function AboutMapSection() {
             </div>
           </div>
 
-          <div className="mx-auto flex w-full max-w-[260px] flex-col gap-5 text-left">
+          <div className="mx-auto flex w-full max-w-[240px] sm:max-w-[260px] flex-col gap-4 sm:gap-5 text-left">
             {STATS.map((stat, index) => (
-              <div key={stat.label} className="flex items-baseline justify-start gap-4 border-b border-[#ededed] pb-4 last:border-none last:pb-0">
-                <div className="flex items-baseline gap-3">
+              <div key={stat.label} className="flex items-baseline justify-start gap-3 sm:gap-4 border-b border-[#ededed] pb-3 sm:pb-4 last:border-none last:pb-0">
+                <div className="flex items-baseline gap-2 sm:gap-3">
                   <span 
-                    className={`text-3xl md:text-4xl font-black transition-all duration-500 ${stat.accent} ${
+                    className={`text-2xl sm:text-3xl md:text-4xl font-black transition-all duration-500 ${stat.accent} ${
                       isBouncing[index] ? 'animate-bounce' : ''
                     }`}
                   >
                     {isVisible ? animatedStats[index] : 0}
                   </span>
                   <span 
-                    className={`text-xl md:text-2xl font-bold transition-all duration-500 ${stat.accent} ${
+                    className={`text-lg sm:text-xl md:text-2xl font-bold transition-all duration-500 ${stat.accent} ${
                       isBouncing[index] ? 'animate-pulse' : ''
                     }`}
                   >

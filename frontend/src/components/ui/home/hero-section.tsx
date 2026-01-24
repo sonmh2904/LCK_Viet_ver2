@@ -49,11 +49,11 @@ export function HeroSection() {
 
   return (
     <section
-      className="relative overflow-hidden"
+      className="relative w-full overflow-hidden"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative h-[300px] w-full sm:h-[400px] md:h-[480px]">
+      <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[16/9] lg:aspect-[21/9] min-h-[300px] sm:min-h-[400px] md:min-h-[480px]">
         {slides.map((slide, index) => (
           <div
             key={slide.id}
@@ -61,7 +61,14 @@ export function HeroSection() {
               currentSlide === index ? "opacity-100" : "opacity-0"
             }`}
           >
-            <Image src={slide.image} alt={`LCK Việt banner ${index + 1}`} fill className="object-cover" priority={index === 0} />
+            <Image 
+              src={slide.image} 
+              alt={`LCK Việt banner ${index + 1}`} 
+              fill 
+              className="object-cover object-center" 
+              priority={index === 0} 
+              sizes="100vw"
+            />
           </div>
         ))}
       </div>

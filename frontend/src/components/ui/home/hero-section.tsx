@@ -53,7 +53,7 @@ export function HeroSection() {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative h-[480px] w-full">
+      <div className="relative h-[300px] w-full sm:h-[400px] md:h-[480px]">
         {slides.map((slide, index) => (
           <div
             key={slide.id}
@@ -71,7 +71,7 @@ export function HeroSection() {
           type="button"
           onClick={handlePrev}
           aria-label="Banner trước"
-          className="h-8 w-8 items-center justify-center rounded-full border border-white/60 bg-black/20 text-white backdrop-blur-sm transition hover:bg-black/30 hover:border-white/80 lg:flex"
+          className="h-8 w-8 items-center justify-center rounded-full border border-white/60 bg-black/20 text-white backdrop-blur-sm transition hover:bg-black/30 hover:border-white/80 flex"
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
@@ -94,7 +94,7 @@ export function HeroSection() {
           type="button"
           onClick={handleNext}
           aria-label="Banner tiếp theo"
-          className="h-8 w-8 items-center justify-center rounded-full border border-white/60 bg-black/20 text-white backdrop-blur-sm transition hover:bg-black/30 hover:border-white/80 lg:flex"
+          className="h-8 w-8 items-center justify-center rounded-full border border-white/60 bg-black/20 text-white backdrop-blur-sm transition hover:bg-black/30 hover:border-white/80 flex"
         >
           <ChevronRight className="h-4 w-4" />
         </button>

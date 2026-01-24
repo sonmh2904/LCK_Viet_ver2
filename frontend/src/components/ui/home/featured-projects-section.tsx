@@ -71,7 +71,7 @@ export function FeaturedProjectsSection() {
         </div>
         
         <div 
-          className="relative h-[500px] max-w-6xl mx-auto"
+          className="relative h-[300px] sm:h-[400px] md:h-[500px] max-w-6xl mx-auto"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
@@ -82,17 +82,17 @@ export function FeaturedProjectsSection() {
                   key={project.id}
                   className={`absolute transition-all duration-500 ease-in-out ${
                     project.isCenter 
-                      ? 'z-10 scale-110 shadow-2xl' 
-                      : 'opacity-80 scale-90'
-                  } ${project.position === -2 ? '-translate-x-[150%]' : ''}
-                     ${project.position === -1 ? '-translate-x-[75%]' : ''}
-                     ${project.position === 1 ? 'translate-x-[75%]' : ''}
-                     ${project.position === 2 ? 'translate-x-[150%]' : ''}
+                      ? 'z-10 scale-100 sm:scale-110 shadow-2xl' 
+                      : 'opacity-0 sm:opacity-80 scale-75 sm:scale-90'
+                  } ${project.position === -2 ? '-translate-x-[150%] sm:-translate-x-[150%]' : ''}
+                     ${project.position === -1 ? '-translate-x-[75%] sm:-translate-x-[75%]' : ''}
+                     ${project.position === 1 ? 'translate-x-[75%] sm:translate-x-[75%]' : ''}
+                     ${project.position === 2 ? 'translate-x-[150%] sm:translate-x-[150%]' : ''}
                      cursor-pointer hover:opacity-100`}
                   onClick={() => setCurrentIndex(projects.findIndex(p => p.id === project.id))}
                 >
                   <div className={`relative ${
-                    project.isCenter ? 'w-[400px] h-[300px]' : 'w-[300px] h-[225px]'
+                    project.isCenter ? 'w-[280px] h-[200px] sm:w-[350px] sm:h-[250px] md:w-[400px] md:h-[300px]' : 'w-[200px] h-[150px] sm:w-[250px] sm:h-[180px] md:w-[300px] md:h-[225px]'
                   } rounded-lg overflow-hidden`}>
                     <Image
                       src={project.src}
@@ -110,20 +110,20 @@ export function FeaturedProjectsSection() {
           
           <button 
             onClick={handlePrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-red-700 p-2 rounded-full shadow-lg z-20"
+            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-red-700 p-1.5 sm:p-2 rounded-full shadow-lg z-20"
             aria-label="Previous project"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-8 sm:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
           
           <button 
             onClick={handleNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-red-700 p-2 rounded-full shadow-lg z-20"
+            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-red-700 p-1.5 sm:p-2 rounded-full shadow-lg z-20"
             aria-label="Next project"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-8 sm:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>

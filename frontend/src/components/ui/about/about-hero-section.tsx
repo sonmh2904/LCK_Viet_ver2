@@ -2,12 +2,12 @@
 
 export function AboutHeroSection() {
   return (
-    <section className="relative overflow-hidden bg-white pb-24 pt-28">
+    <section className="relative overflow-hidden bg-white pb-16 sm:pb-20 md:pb-24 pt-20 sm:pt-24 md:pt-28">
       <div className="absolute inset-0">
         <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#f2f2f2] via-transparent to-transparent" />
       </div>
 
-      <div className="relative mx-auto flex w-full max-w-6xl flex-col items-center gap-14 px-6 text-center lg:flex-row lg:items-start lg:gap-16 lg:text-left">
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col items-center gap-8 px-4 sm:px-6 text-center lg:flex-row lg:items-start lg:gap-16 lg:text-left">
         <div className="flex-1">
           <span className="inline-flex items-center rounded-full bg-[#b30000]/10 px-5 py-1 text-xs font-semibold uppercase tracking-[0.35em] text-[#b30000]">
             Giới thiệu
@@ -26,8 +26,8 @@ export function AboutHeroSection() {
           </p>
         </div>
 
-        <div className="relative flex w-full max-w-[800px] flex-1 justify-center">
-          <div className="relative aspect-[9/14] w-full max-w-[400px] overflow-hidden rounded-[32px] border-[6px] border-white shadow-2xl shadow-[#b30000]/20">
+        <div className="relative flex w-full max-w-[400px] flex-1 justify-center order-first lg:order-last">
+          <div className="relative aspect-[9/14] w-full max-w-[280px] sm:max-w-[320px] md:max-w-[400px] overflow-hidden rounded-[24px] sm:rounded-[28px] md:rounded-[32px] border-[4px] sm:border-[5px] md:border-[6px] border-white shadow-2xl shadow-[#b30000]/20">
             <video
               src="/demo_gioithieu.mp4"
               autoPlay

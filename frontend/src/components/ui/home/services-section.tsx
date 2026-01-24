@@ -53,11 +53,11 @@ export function ServicesSection() {
           </motion.p>
         </motion.div>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {services.map((service, index) => (
             <motion.div
               key={service.title}
-              className="group relative overflow-hidden rounded-2xl border-2 border-transparent bg-white p-8 text-center shadow-lg transition-all duration-300 hover:border-[#b30000]/20 hover:shadow-2xl hover:shadow-red-500/10"
+              className="group relative overflow-hidden rounded-2xl border-2 border-transparent bg-white p-4 sm:p-8 text-center shadow-lg transition-all duration-300 hover:border-[#b30000]/20 hover:shadow-2xl hover:shadow-red-500/10"
               initial={{ opacity: 0, y: 50 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9 + index * 0.15, duration: 0.6 }}
@@ -72,23 +72,23 @@ export function ServicesSection() {
               <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#b30000]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               
               <motion.div 
-                className="mb-6 flex justify-center"
+                className="mb-4 sm:mb-6 flex justify-center"
                 whileHover={{ 
                   scale: 1.1,
                   rotate: 360,
                   transition: { duration: 0.6, ease: "easeInOut" }
                 }}
               >
-                <div className="relative flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 via-red-400 to-red-800 text-white shadow-lg">
+                <div className="relative flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center rounded-full bg-gradient-to-r from-blue-500 via-red-400 to-red-800 text-white shadow-lg">
                   {service.icon}
                   {/* Glow effect on hover */}
                   <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#b30000]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
                 </div>
               </motion.div>
-              <h3 className="mb-4 text-xl font-bold uppercase bg-gradient-to-r from-blue-500 via-red-400 to-red-800 bg-clip-text text-transparent group-hover:opacity-80 transition-opacity duration-300">
+              <h3 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold uppercase bg-gradient-to-r from-blue-500 via-red-400 to-red-800 bg-clip-text text-transparent group-hover:opacity-80 transition-opacity duration-300">
                 {service.title}
               </h3>
-              <p className="text-base text-slate-600 leading-relaxed group-hover:text-slate-700 transition-colors duration-300">
+              <p className="text-sm sm:text-base text-slate-600 leading-relaxed group-hover:text-slate-700 transition-colors duration-300">
                 {service.description}
               </p>
             </motion.div>

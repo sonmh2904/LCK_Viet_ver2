@@ -76,7 +76,7 @@ export default function Header() {
                   priority
                 />
               </div>
-              <span className="text-2xl font-bold tracking-wide text-white drop-shadow-2xl" style={{ fontFamily: 'Brush Script MT, cursive, sans-serif', textShadow: '3px 3px 6px rgba(0,0,0,0.5)' }}>LCK VIỆT</span>
+              <span className="text-2xl font-bold tracking-wide text-white drop-shadow-2xl" style={{ fontFamily: 'Arial, sans-serif', textShadow: '3px 3px 6px rgba(0,0,0,0.5)' }}>LCK VIỆT</span>
             </Link>
           </div>
 

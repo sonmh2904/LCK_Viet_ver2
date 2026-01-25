@@ -2,7 +2,7 @@
 
 export function AboutHeroSection() {
   return (
-    <section className="relative overflow-hidden bg-white pb-16 sm:pb-20 md:pb-24 pt-20 sm:pt-24 md:pt-28">
+    <section className="relative overflow-hidden bg-white pb-16 sm:pb-20 md:pb-24 pt-28 sm:pt-32 md:pt-36 -mt-20">
       <div className="absolute inset-0">
         <div className="absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#f2f2f2] via-transparent to-transparent" />
       </div>

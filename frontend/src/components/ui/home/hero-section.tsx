@@ -49,7 +49,7 @@ export function HeroSection() {
 
   return (
     <section
-      className="relative w-full overflow-hidden -mt-20"
+      className="relative w-full overflow-hidden -mt-20 pt-20"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

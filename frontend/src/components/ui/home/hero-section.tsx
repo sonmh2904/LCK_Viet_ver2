@@ -11,7 +11,7 @@ const slides = [
   },
   {
     id: 2,
-    image: "/banner/banner-13.png",
+    image: "/banner/banner-1.png",
   },
   {
     id: 3,

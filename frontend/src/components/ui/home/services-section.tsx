@@ -85,7 +85,7 @@ export function ServicesSection() {
                   <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#b30000]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-sm" />
                 </div>
               </motion.div>
-              <h3 className="mb-3 sm:mb-4 text-lg sm:text-xl font-bold uppercase bg-gradient-to-r from-blue-500 via-red-400 to-red-800 bg-clip-text text-transparent group-hover:opacity-80 transition-opacity duration-300">
+              <h3 className="mb-3 sm:mb-4 text-sm sm:text-base md:text-lg font-bold uppercase bg-gradient-to-r from-blue-500 via-red-400 to-red-800 bg-clip-text text-transparent group-hover:opacity-80 transition-opacity duration-300 whitespace-nowrap">
                 {service.title}
               </h3>
               <p className="text-sm sm:text-base text-slate-600 leading-relaxed group-hover:text-slate-700 transition-colors duration-300">

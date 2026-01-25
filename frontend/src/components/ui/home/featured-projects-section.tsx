@@ -71,7 +71,7 @@ export function FeaturedProjectsSection() {
         </div>
         
         <div 
-          className="relative h-[250px] sm:h-[350px] md:h-[450px] max-w-6xl mx-auto"
+          className="relative h-[300px] sm:h-[400px] md:h-[500px] max-w-6xl mx-auto"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
@@ -82,17 +82,17 @@ export function FeaturedProjectsSection() {
                   key={project.id}
                   className={`absolute transition-all duration-500 ease-in-out ${
                     project.isCenter 
-                      ? 'z-10 scale-100 sm:scale-105 md:scale-110 shadow-2xl' 
-                      : 'opacity-0 scale-50 sm:scale-75 md:scale-90'
-                  } ${project.position === -2 ? '-translate-x-[200%] sm:-translate-x-[150%] md:-translate-x-[150%]' : ''}
-                     ${project.position === -1 ? '-translate-x-[100%] sm:-translate-x-[75%] md:-translate-x-[75%]' : ''}
-                     ${project.position === 1 ? 'translate-x-[100%] sm:translate-x-[75%] md:translate-x-[75%]' : ''}
-                     ${project.position === 2 ? 'translate-x-[200%] sm:translate-x-[150%] md:translate-x-[150%]' : ''}
+                      ? 'z-10 scale-100 sm:scale-110 shadow-2xl' 
+                      : 'opacity-0 sm:opacity-80 scale-75 sm:scale-90'
+                  } ${project.position === -2 ? '-translate-x-[150%] sm:-translate-x-[150%]' : ''}
+                     ${project.position === -1 ? '-translate-x-[75%] sm:-translate-x-[75%]' : ''}
+                     ${project.position === 1 ? 'translate-x-[75%] sm:translate-x-[75%]' : ''}
+                     ${project.position === 2 ? 'translate-x-[150%] sm:translate-x-[150%]' : ''}
                      cursor-pointer hover:opacity-100`}
                   onClick={() => setCurrentIndex(projects.findIndex(p => p.id === project.id))}
                 >
                   <div className={`relative ${
-                    project.isCenter ? 'w-[240px] h-[180px] sm:w-[320px] sm:h-[240px] md:w-[400px] md:h-[300px]' : 'w-[160px] h-[120px] sm:w-[220px] sm:h-[165px] md:w-[300px] md:h-[225px]'
+                    project.isCenter ? 'w-[280px] h-[200px] sm:w-[350px] sm:h-[250px] md:w-[400px] md:h-[300px]' : 'w-[200px] h-[150px] sm:w-[250px] sm:h-[180px] md:w-[300px] md:h-[225px]'
                   } rounded-lg overflow-hidden`}>
                     <Image
                       src={project.src}

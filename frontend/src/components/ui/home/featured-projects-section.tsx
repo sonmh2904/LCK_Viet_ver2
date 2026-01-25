@@ -71,7 +71,7 @@ export function FeaturedProjectsSection() {
         </div>
         
         <div 
-          className="relative h-[300px] sm:h-[400px] md:h-[500px] max-w-6xl mx-auto"
+          className="relative h-[300px] sm:h-[400px] md:h-[500px] w-full mx-auto"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >

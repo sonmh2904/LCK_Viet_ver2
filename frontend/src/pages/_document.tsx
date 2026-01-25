@@ -8,6 +8,7 @@ export default function Document() {
           name="description"
           content="LCK Việt - Đơn vị thiết kế và thi công giải pháp xây dựng đồng hành cùng các thương hiệu hàng đầu Việt Nam."
         />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/logo_lck.png" />
       </Head>
       <body className="antialiased">

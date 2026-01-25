@@ -12,7 +12,7 @@ import { FooterCTASection } from "@/components/ui/home/footer-cta-section"
 export default function HomePage() {
   return (
     <div className="bg-[#fff8f7] text-slate-900">
-      <main className="w-full flex flex-col">
+      <main className="w-full max-w-full flex flex-col overflow-x-hidden">
         <HeroSection />
         <ServicesSection />
         <BlogHighlightSection />

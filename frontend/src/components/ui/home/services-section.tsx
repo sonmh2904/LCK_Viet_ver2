@@ -36,7 +36,7 @@ export function ServicesSection() {
           backgroundSize: '50px 50px'
         }} />
       </div>
-      <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 sm:px-6">
+      <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 sm:px-6">
         <motion.div 
           className="text-center"
           initial={{ opacity: 0, y: 30 }}

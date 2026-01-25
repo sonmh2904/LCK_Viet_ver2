@@ -123,12 +123,12 @@ export default function BlogHighlightSection() {
           </motion.a>
         </motion.div>
 
-        <div className="grid items-stretch gap-8 lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)]">
+        <div className="grid items-stretch gap-6 lg:gap-8 lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)]">
           {/* Featured Post */}
           <motion.article
             whileHover={{ translateY: -6 }}
             transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
-            className="group relative flex h-full min-h-[280px] sm:min-h-[320px] md:min-h-[360px] overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-black/80 via-black/60 to-black/40 shadow-[0_40px_90px_-50px_rgba(249,115,22,0.35)] cursor-pointer"
+            className="group relative flex h-full min-h-[240px] sm:min-h-[280px] md:min-h-[320px] lg:min-h-[360px] overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-br from-black/80 via-black/60 to-black/40 shadow-[0_40px_90px_-50px_rgba(249,115,22,0.35)] cursor-pointer"
             onClick={() => {
               if (featured?.slug) {
                 window.location.href = `/tin-tuc/${featured.slug}`;

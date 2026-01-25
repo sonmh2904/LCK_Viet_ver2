@@ -53,7 +53,7 @@ export function HeroSection() {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] md:aspect-[16/9] lg:aspect-[21/9] min-h-[300px] sm:min-h-[400px] md:min-h-[480px]">
+      <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] lg:aspect-[16/9] min-h-[250px] sm:min-h-[350px] md:min-h-[450px] lg:min-h-[500px]">
         {slides.map((slide, index) => (
           <div
             key={slide.id}

@@ -36,7 +36,7 @@ export function ServicesSection() {
           backgroundSize: '50px 50px'
         }} />
       </div>
-      <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-6 px-6">
+      <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 sm:px-6">
         <motion.div 
           className="text-center"
           initial={{ opacity: 0, y: 30 }}
@@ -53,7 +53,7 @@ export function ServicesSection() {
           </motion.p>
         </motion.div>
 
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {services.map((service, index) => (
             <motion.div
               key={service.title}

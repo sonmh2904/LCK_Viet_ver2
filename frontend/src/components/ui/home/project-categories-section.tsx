@@ -45,7 +45,7 @@ export function ProjectCategoriesSection() {
 
   const visibleDesigns = highlightDesigns.slice(currentIndex, currentIndex + 3)
   return (
-    <section id="du-an" className="relative overflow-hidden bg-white py-16 sm:py-20 md:py-24">
+    <section id="du-an" className="relative overflow-hidden bg-white py-12 sm:py-16 md:py-20">
       <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-12 px-4 sm:px-6">
         <div className="text-center">
           <h2 className="text-4xl font-bold uppercase tracking-wider text-[#b30000] sm:text-5xl font-sans italic drop-shadow text-center">
@@ -71,7 +71,7 @@ export function ProjectCategoriesSection() {
           </div>
         ) : highlightDesigns.length > 0 ? (
           <div className="relative">
-            <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
               {visibleDesigns.map((design) => (
                 <Link
                   key={design._id}

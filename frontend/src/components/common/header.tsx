@@ -20,6 +20,8 @@ const PRICING_LINKS = [
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isThietKeMenuOpen, setIsThietKeMenuOpen] = useState(false);
+  const [isBaoGiaMenuOpen, setIsBaoGiaMenuOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loadingCategories, setLoadingCategories] = useState(true);
 
@@ -244,18 +246,18 @@ export default function Header() {
             </Link>
 
             <div className="space-y-2 rounded px-2 py-1">
-              <Link
-                href="/thiet-ke"
-                className="flex items-center gap-2 px-3 py-3 text-sm font-medium uppercase tracking-[0.08em] text-white transition-colors hover:bg-red-800/80 rounded block"
-                onClick={() => setIsMobileMenuOpen(false)}
+              <button
+                onClick={() => setIsThietKeMenuOpen(!isThietKeMenuOpen)}
+                className="flex items-center gap-2 px-3 py-3 text-sm font-medium uppercase tracking-[0.08em] text-white transition-colors hover:bg-red-800/80 rounded block w-full text-left bg-transparent border-none cursor-pointer"
               >
                 <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7h16M4 12h10m-10 5h6" />
                 </svg>
                 <span>THIẾT KẾ</span>
-              </Link>
+              </button>
 
-              <div className="space-y-1 rounded-lg border border-white/20 bg-white/5 p-1">
+              {isThietKeMenuOpen && (
+                <div className="space-y-1 rounded-lg border border-white/20 bg-white/5 p-1">
                 <Link
                   href="/thiet-ke"
                   className="block rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-white transition hover:bg-white/15"
@@ -280,6 +282,7 @@ export default function Header() {
                   ))
                 )}
               </div>
+              )}
             </div>
 
             <Link
@@ -294,18 +297,18 @@ export default function Header() {
             </Link>
 
             <div className="space-y-2 rounded px-2 py-1">
-              <Link
-                href="/bao-gia"
-                className="flex items-center gap-2 px-3 py-3 text-sm font-medium uppercase tracking-[0.08em] text-white transition-colors hover:bg-red-800/80 rounded block"
-                onClick={() => setIsMobileMenuOpen(false)}
+              <button
+                onClick={() => setIsBaoGiaMenuOpen(!isBaoGiaMenuOpen)}
+                className="flex items-center gap-2 px-3 py-3 text-sm font-medium uppercase tracking-[0.08em] text-white transition-colors hover:bg-red-800/80 rounded block w-full text-left bg-transparent border-none cursor-pointer"
               >
                 <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                 </svg>
                 <span>BÁO GIÁ</span>
-              </Link>
+              </button>
 
-              <div className="space-y-1 rounded-lg border border-white/20 bg-white/5 p-1">
+              {isBaoGiaMenuOpen && (
+                <div className="space-y-1 rounded-lg border border-white/20 bg-white/5 p-1">
                 <Link
                   href="/bao-gia/thi-cong"
                   className="block rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-white transition hover:bg-white/15"
@@ -321,6 +324,7 @@ export default function Header() {
                   Báo giá thiết kế
                 </Link>
               </div>
+              )}
             </div>
 
             <Link

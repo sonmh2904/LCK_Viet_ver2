@@ -63,7 +63,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <title>{pageTitle}</title>
         </Head>
         {!isAdminPage && <Header />}
-        <div className={`${isAdminPage ? '' : 'pt-20'} bg-white min-h-screen`}>
+        <div className={`${isAdminPage ? '' : 'pt-20'} min-h-screen`}>
           <Component {...pageProps} />
           {!isAdminPage && <Footer />}
           {mounted && (

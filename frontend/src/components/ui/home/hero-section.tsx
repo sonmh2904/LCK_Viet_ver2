@@ -11,7 +11,7 @@ const slides = [
   },
   {
     id: 2,
-    image: "/banner/banner-7.jpg",
+    image: "/banner/banner-13.png",
   },
   {
     id: 3,
@@ -53,7 +53,7 @@ export function HeroSection() {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <div className="relative w-full aspect-[4/3] sm:aspect-[16/9] md:aspect-[21/9] lg:aspect-[16/9] min-h-[250px] sm:min-h-[350px] md:min-h-[450px] lg:min-h-[500px]">
+      <div className="relative w-full aspect-[8/3] min-h-[300px] sm:min-h-[400px] md:min-h-[500px]">
         {slides.map((slide, index) => (
           <div
             key={slide.id}
@@ -65,7 +65,7 @@ export function HeroSection() {
               src={slide.image} 
               alt={`LCK Việt banner ${index + 1}`} 
               fill 
-              className="object-cover object-center" 
+              className="object-contain object-center" 
               priority={index === 0} 
               sizes="100vw"
             />

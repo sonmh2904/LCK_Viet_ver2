@@ -17,14 +17,20 @@ export default function DesignDetailPage() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [relatedDesigns, setRelatedDesigns] = useState<Design[]>([])
   const [loadingRelated, setLoadingRelated] = useState(true)
+  const [isClient, setIsClient] = useState(false)
 
   const fetchDesign = async () => {
     try {
       setLoading(true)
       setError(null)
       
-      if (!params.id || typeof params.id !== 'string') {
+      if (!params?.id || typeof params.id !== 'string') {
         throw new Error('Invalid design ID')
+      }
+
+      // Add guard for client-side only
+      if (typeof window === 'undefined') {
+        return
       }
 
       const response = await designAPI.getDesignById(params.id)
@@ -39,6 +45,12 @@ export default function DesignDetailPage() {
   const fetchRelatedDesigns = async () => {
     try {
       setLoadingRelated(true)
+      
+      // Add guard for client-side only
+      if (typeof window === 'undefined') {
+        return
+      }
+      
       if (design?.categories?._id) {
         const response = await designAPI.getDesigns({
           categories: design.categories._id,
@@ -55,15 +67,24 @@ export default function DesignDetailPage() {
     }
   }
 
+  // Add client-side mounting effect
   useEffect(() => {
-    fetchDesign()
-  }, [params.id])
+    setIsClient(true)
+  }, [])
 
   useEffect(() => {
-    if (design) {
+    // Only run on client-side when params.id is available
+    if (isClient && params?.id) {
+      fetchDesign()
+    }
+  }, [isClient, params?.id])
+
+  useEffect(() => {
+    // Only run on client-side
+    if (isClient && design) {
       fetchRelatedDesigns()
     }
-  }, [design])
+  }, [isClient, design])
 
   const handleImageChange = (index: number) => {
     setCurrentImageIndex(index)

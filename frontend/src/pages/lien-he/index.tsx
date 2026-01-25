@@ -133,7 +133,7 @@ export default function ContactPage() {
                 <div className="h-2 w-2 rounded-full bg-[#f05123] animate-pulse" />
                 <span className="text-xs font-bold uppercase tracking-[0.4em] text-[#b30000]">Liên hệ</span>
               </div>
-              <h1 className="text-5xl md:text-6xl font-black uppercase tracking-[0.12em] bg-gradient-to-r from-[#2c1b1a] via-[#b30000] to-[#2c1b1a] bg-clip-text text-transparent leading-tight">
+              <h1 className="text-4xl font-bold uppercase tracking-wider text-[#b30000] sm:text-5xl font-sans italic drop-shadow text-center">
                 Kết nối cùng LCK Việt
               </h1>
               <p className="mx-auto max-w-3xl text-lg leading-relaxed text-slate-600 font-medium">

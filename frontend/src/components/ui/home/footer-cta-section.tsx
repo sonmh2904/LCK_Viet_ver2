@@ -34,7 +34,7 @@ export function FooterCTASection() {
               Đối tác
             </span>
           </div>
-          <h2 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-bold tracking-normal bg-gradient-to-r from-[#b30000] to-[#8a0000] bg-clip-text text-transparent leading-snug text-center">
+          <h2 className="mt-3 text-2xl sm:text-3xl md:text-4xl font-bold tracking-normal bg-gradient-to-r from-[#b30000] to-[#8a0000] bg-clip-text text-transparent leading-snug text-center italic">
             LCK Việt hân hạnh đồng hành cùng các thương hiệu uy tín
           </h2>
         </div>

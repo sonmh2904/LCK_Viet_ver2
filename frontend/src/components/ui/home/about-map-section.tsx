@@ -75,7 +75,7 @@ export function AboutMapSection() {
               Giới thiệu
             </span>
           </div>
-          <h2 className="mt-3 text-4xl md:text-5xl font-black uppercase tracking-[0.12em] bg-gradient-to-r from-[#2c1b1a] via-[#b30000] to-[#2c1b1a] bg-clip-text text-transparent leading-tight">
+          <h2 className="text-4xl font-bold uppercase tracking-wider text-[#b30000] sm:text-5xl font-sans italic drop-shadow text-center">
             LCK Việt
           </h2>
         </div>

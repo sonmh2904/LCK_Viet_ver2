@@ -114,7 +114,7 @@ export function Footer() {
             <p className="text-xs font-semibold uppercase tracking-[0.35em] text-[#ffeede]">
               Về chúng tôi
             </p>
-            <h3 className="text-2xl font-bold uppercase tracking-wide">Công ty TNHH Đầu tư và Xây dựng LCK Việt</h3>
+            <h3 className="text-2xl font-bold uppercase tracking-wide">Thiết kế & Thi công nhà đẹp - LCK Việt</h3>
             <p className="text-sm leading-relaxed text-white/90">
               LCK Việt là đơn vị tổng thầu thiết kế và thi công kiến trúc nội thất, đồng hành cùng khách hàng và đối tác trong các dự án nhà ở, văn phòng và thương mại.
             </p>

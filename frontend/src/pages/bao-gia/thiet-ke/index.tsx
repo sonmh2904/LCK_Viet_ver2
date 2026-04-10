@@ -9,7 +9,7 @@ export default function BaoGiaThietKePage() {
     <div className="min-h-screen bg-[#fff8f7]">
 
       {/* Detailed Quotation Tables */}
-      <section className="py-24 bg-white">
+      <section className="py-8 bg-white">
         <div className="mx-auto w-full max-w-7xl px-6">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-[#b30000] mb-4">Báo giá thiết kế – LCK Việt</h2>

@@ -9,8 +9,8 @@ import { AboutMapSection } from "@/components/ui/home/about-map-section"
 import { FooterCTASection } from "@/components/ui/home/footer-cta-section"
 
 const CONTACT_INFO = {
-  companyName: "Công ty TNHH Đầu tư và Xây dựng LCK Việt",
-  address: "172 phố Đại Từ, phường Đại Kim, quận Hoàng Mai, Hà Nội",
+  companyName: "Thiết kế & Thi công nhà đẹp - LCK Việt",
+  address: "172 phố Đại Từ, phường Định Công, TP.Hà Nội",
   phone: "0985.304.394",
   hotline: "0374.334.444",
   email: "kientruclckviet@gmail.vn",
@@ -122,17 +122,13 @@ export default function ContactPage() {
   return (
     <div className="bg-[#fff8f7] text-slate-900">
       <main className="mx-auto flex w-full flex-col gap-0">
-        <section className="relative overflow-hidden bg-gradient-to-br from-[#fff8f7] via-white to-[#fff1ec] pb-32 pt-32">
+        <section className="relative overflow-hidden bg-gradient-to-br from-[#fff8f7] via-white to-[#fff1ec] pb-32 pt-8">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(179,0,0,0.03),transparent_50%)]" />
           <div className="absolute top-10 right-10 h-72 w-72 rounded-full bg-gradient-to-br from-[#f05123]/10 to-[#b30000]/5 blur-3xl" />
           <div className="absolute bottom-10 left-10 h-96 w-96 rounded-full bg-gradient-to-tr from-[#b30000]/10 to-[#f05123]/5 blur-3xl" />
 
           <div className="relative mx-auto flex w-full max-w-7xl flex-col gap-20 px-6">
             <header className="flex flex-col gap-6 text-center">
-              <div className="mx-auto flex items-center gap-3 rounded-full bg-gradient-to-r from-[#b30000]/10 to-[#f05123]/10 px-6 py-2 border border-[#f4b7aa]/30 backdrop-blur-sm">
-                <div className="h-2 w-2 rounded-full bg-[#f05123] animate-pulse" />
-                <span className="text-xs font-bold uppercase tracking-[0.4em] text-[#b30000]">Liên hệ</span>
-              </div>
               <h1 className="text-4xl font-bold uppercase tracking-wider text-[#b30000] sm:text-5xl font-sans italic drop-shadow text-center">
                 Kết nối cùng LCK Việt
               </h1>
@@ -319,9 +315,9 @@ export default function ContactPage() {
                       <p className="text-sm text-slate-500">
                         <span className="text-red-500">*</span> Thông tin bắt buộc. Chúng tôi bảo mật dữ liệu và chỉ sử dụng để tư vấn dự án của bạn.
                       </p>
-                      <p className="text-sm text-slate-400">
+                      {/* <p className="text-sm text-slate-400">
                         Phản hồi trong vòng 24 giờ
-                      </p>
+                      </p> */}
                     </div>
 
                     <button

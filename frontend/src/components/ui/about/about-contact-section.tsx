@@ -1,20 +1,20 @@
 "use client"
 
 import React from "react"
-import Image from "next/image"
 
 export function AboutContactSection() {
   return (
     <section className="py-16 sm:py-20 md:py-24 bg-white">
       <div className="container mx-auto px-4">
         {/* Banner Section */}
-        <div className="mb-12 sm:mb-16 rounded-xl overflow-hidden shadow-lg">
-          <Image 
-            src="/banner/banner-3.png" 
-            alt="LCK VIỆT NAM" 
-            width={1200}
-            height={400}
-            className="w-full h-auto object-cover"
+        <div className="mb-12 sm:mb-16 rounded-xl overflow-hidden shadow-lg aspect-video">
+          <video
+            src="/banner/lck_viet.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover"
           />
         </div>
 

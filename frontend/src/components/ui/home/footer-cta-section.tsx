@@ -13,6 +13,7 @@ const BRAND_LOGOS = [
   { src: "/brand/jotun.jpg", alt: "Jotun" },
   { src: "/brand/ecopark.jpg", alt: "Ecopark" },
   { src: "/brand/vinhome.jpg", alt: "Vinhomes" },
+  { src: "/brand/hoaphat.png", alt: "Hòa Phát" },
 ] as const
 
 const ANIMATION_DURATION_PER_LOGO = 3

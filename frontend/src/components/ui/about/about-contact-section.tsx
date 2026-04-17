@@ -10,8 +10,7 @@ export function AboutContactSection() {
         <div className="mb-12 sm:mb-16 rounded-xl overflow-hidden shadow-lg aspect-video">
           <video
             src="/banner/lck_viet.mp4"
-            autoPlay
-            muted
+            controls
             loop
             playsInline
             className="w-full h-full object-cover"
